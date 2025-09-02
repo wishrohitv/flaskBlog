@@ -17,7 +17,7 @@ from requests import post as requests_post
 from settings import Settings
 from utils.add_points import add_points
 from utils.flash_message import flash_message
-from utils.forms.SignUpForm import SignUpForm
+from utils.forms.sign_up_form import SignUpForm
 from utils.log import Log
 from utils.time import current_time_stamp
 

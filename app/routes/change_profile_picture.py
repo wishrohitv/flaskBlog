@@ -10,7 +10,7 @@ from flask import (
 
 from settings import Settings
 from utils.flash_message import flash_message
-from utils.forms.ChangeProfilePictureForm import ChangeProfilePictureForm
+from utils.forms.change_profile_picture_form import ChangeProfilePictureForm
 from utils.log import Log
 
 change_profile_picture_blueprint = Blueprint("change_profile_picture", __name__)

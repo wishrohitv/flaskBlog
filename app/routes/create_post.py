@@ -11,7 +11,7 @@ from flask import (
 from settings import Settings
 from utils.add_points import add_points
 from utils.flash_message import flash_message
-from utils.forms.CreatePostForm import CreatePostForm
+from utils.forms.create_post_form import CreatePostForm
 from utils.generate_url_id_from_post import generate_url_id
 from utils.log import Log
 from utils.time import current_time_stamp

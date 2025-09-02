@@ -1,5 +1,5 @@
 {% extends 'layout.html' %} {% block head %}
-<title>{{translations.editPost.title}}</title>
+<title>{{translations.edit_post.title}}</title>
 <link
     rel="stylesheet"
     href="{{ url_for('static', filename='css/markdownEditor.css') }}"
@@ -10,30 +10,30 @@
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
         {{ form.post_title(class_="input input-bordered w-full my-2",
-        autocomplete="off",placeholder=translations.editPost.titlePlaceholder)
+        autocomplete="off",placeholder=translations.edit_post.title_placeholder)
         }} {{ form.post_tags(class_="input input-bordered w-full my-2",
-        autocomplete="off",placeholder=translations.editPost.tags) }} {{
+        autocomplete="off",placeholder=translations.edit_post.tags) }} {{
         form.post_abstract(class_="textarea textarea-bordered w-full my-2",
-        autocomplete="off",placeholder=translations.editPost.abstractPlaceholder)
+        autocomplete="off",placeholder=translations.edit_post.abstract_placeholder)
         }}
         <p class="text-xs text-center w-fit mx-auto mb-2">
-            {{translations.editPost.separate}}
+            {{translations.edit_post.separate}}
         </p>
 
         <div class="w-fit mx-auto text-center my-4">
-            <p class="mb-2">{{translations.editPost.current}}</p>
+            <p class="mb-2">{{translations.edit_post.current}}</p>
             <img
                 src="{{ url_for('return_post_banner.return_post_banner', post_id= id) }}"
                 class="h-48 w-64 group-hover:scale-110 transition duration-150 object-cover rounded-md mx-auto select-none"
             />
-            <p class="mt-2">{{translations.editPost.new}}</p>
+            <p class="mt-2">{{translations.edit_post.new}}</p>
             {{ form.post_banner(class_="file-input file-input-bordered w-full",
-            placeholder=translations.editPost.bannerPlaceholder) }}
+            placeholder=translations.edit_post.banner_placeholder) }}
         </div>
 
         <div class="mx-auto w-fit">
             <label class="block my-1 text-center"
-                >{{translations.editPost.category}}</label
+                >{{translations.edit_post.category}}</label
             >
             <select
                 class="select select-bordered w-72"
@@ -105,7 +105,7 @@
         </div>
 
         <button type="submit" class="btn btn-neutral btn-block mt-4">
-            {{translations.editPost.save}}
+            {{translations.edit_post.save}}
         </button>
     </form>
     <script src="{{ url_for('static', filename='js/markdownEditor.js') }}"></script>

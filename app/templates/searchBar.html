@@ -1,13 +1,13 @@
 {% extends 'layout.html' %} {% block head %}
-<title>{{translations.searchBar.title}}</title>
+<title>{{translations.search_bar.title}}</title>
 {% endblock head %} {% block body %}
 <div class="w-fit mx-auto mt-32">
     <div>
         <input
             type="text"
-            id="searchBarInput"
+            id="search-bar-input"
             autocomplete="off"
-            placeholder="{{translations.searchBar.placeholder}}"
+            placeholder="{{translations.search_bar.placeholder}}"
             class="input input-bordered w-72"
         />
         <button onclick="searchBar()" class="btn btn-neutral">

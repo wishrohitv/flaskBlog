@@ -11,7 +11,7 @@ from passlib.hash import sha512_crypt as encryption
 
 from settings import Settings
 from utils.flash_message import flash_message
-from utils.forms.ChangePasswordForm import ChangePasswordForm
+from utils.forms.change_password_form import ChangePasswordForm
 from utils.log import Log
 
 change_password_blueprint = Blueprint("change_password", __name__)

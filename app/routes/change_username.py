@@ -10,7 +10,7 @@ from flask import (
 
 from settings import Settings
 from utils.flash_message import flash_message
-from utils.forms.ChangeUserNameForm import ChangeUserNameForm
+from utils.forms.change_user_name_form import ChangeUserNameForm
 from utils.log import Log
 
 change_username_blueprint = Blueprint("change_username", __name__)

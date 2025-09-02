@@ -1,6 +1,6 @@
 {% extends 'layout.html' %} {% block head %} {% if request.path ==
 "/admin/posts" %}
-<title>{{translations.dashboard.titleAdmin}}</title>
+<title>{{translations.dashboard.title_admin}}</title>
 {% else %}
 <title>{{translations.dashboard.title}}</title>
 {% endif %} {% endblock head %} {% block body %} {% if show_posts %}
@@ -69,14 +69,14 @@
         <div class="flex items-center">
             <i class="ti ti-clock mr-1 text-xl"></i>
             <p class="hidden md:block mr-1">
-                {{translations.dashboard.creationTime}}:
+                {{translations.dashboard.creation_time}}:
             </p>
             <p class="time font-medium">{{ post[7] }}</p>
         </div>
         <div class="flex items-center">
             <i class="ti ti-clock-edit mr-1 text-xl"></i>
             <p class="hidden md:block mr-1">
-                {{translations.dashboard.editTime}}:
+                {{translations.dashboard.edit_time}}:
             </p>
             <p class="time font-medium">{{ post[8] }}</p>
         </div>
@@ -86,14 +86,14 @@
         <div class="flex items-center">
             <i class="ti ti-calendar mr-1 text-xl"></i>
             <p class="hidden md:block mr-1">
-                {{translations.dashboard.creationDate}}:
+                {{translations.dashboard.creation_date}}:
             </p>
             <p class="date font-medium">{{ post[7] }}</p>
         </div>
         <div class="flex items-center">
             <i class="ti ti-calendar-dot mr-1 text-xl"></i>
             <p class="hidden md:block mr-1">
-                {{translations.dashboard.editDate}}:
+                {{translations.dashboard.edit_date}}:
             </p>
             <p class="date font-medium">{{ post[8] }}</p>
         </div>
@@ -125,10 +125,10 @@
 {% endfor %} {% from "components/pagination.html" import pagination %} {{
 pagination(page, total_pages, request.path) }} {% elif not show_posts %} {% if
 request.path == "/admin/posts" %}
-<h1>{{translations.dashboard.noPosts}}</h1>
+<h1>{{translations.dashboard.no_posts}}</h1>
 {% else %}
 <p class="text-center mt-32 select-none">
-    {{translations.dashboard.noPost}}
+    {{translations.dashboard.no_post}}
     <a href="/create_post" class="hover:text-rose-500 duration-150 font-medium"
         >{{translations.dashboard.create}}</a
     >?
@@ -149,14 +149,14 @@ request.path == "/admin/posts" %}
         <div class="flex items-center">
             <i class="ti ti-calendar mr-1 text-xl"></i>
             <p class="hidden md:block mr-1">
-                {{translations.dashboard.creationDate}}:
+                {{translations.dashboard.creation_date}}:
             </p>
             <p class="date">{{ comment[4] }}</p>
         </div>
         <div class="flex items-center">
             <i class="ti ti-clock mr-1 text-xl"></i>
             <p class="hidden md:block mr-1">
-                {{translations.dashboard.creationTime}}:
+                {{translations.dashboard.creation_time}}:
             </p>
             <p class="time">{{ comment[4] }}</p>
         </div>

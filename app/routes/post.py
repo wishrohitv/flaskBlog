@@ -14,7 +14,7 @@ from utils.add_points import add_points
 from utils.calculate_read_time import calculate_read_time
 from utils.delete import delete_comment, delete_post
 from utils.flash_message import flash_message
-from utils.forms.CommentForm import CommentForm
+from utils.forms.comment_form import CommentForm
 from utils.generate_url_id_from_post import get_slug_from_post_title
 
 from utils.log import Log

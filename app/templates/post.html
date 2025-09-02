@@ -6,23 +6,23 @@
 <meta
     property="og:image"
     content="{{
-    blogPostUrl
+    blog_post_url
   }}{{ url_for('return_post_banner.return_post_banner', post_id= id) }}"
 />
 <meta name="keywords" content="{{ tags }}" />
 <meta name="author" content="{{ author }}" />
-<meta property="og:url" content="{{ blogPostUrl }}" />
+<meta property="og:url" content="{{ blog_post_url }}" />
 <meta property="og:description" content="{{ abstract | striptags + '...' }}" />
-<meta name="twitter:site" content="{{ appName }}" />
+<meta name="twitter:site" content="{{ app_name }}" />
 <meta name="twitter:title" content="{{ title }}" />
 <meta name="twitter:description" content="{{ abstract | striptags + '...' }}" />
 <meta
     name="twitter:image"
     content="{{
-    blogPostUrl
+    blog_post_url
   }}{{ url_for('return_post_banner.return_post_banner', post_id= id) }}"
 />
-<meta property="og:site_name" content="{{ appName }}" />
+<meta property="og:site_name" content="{{ app_name }}" />
 
 {% endblock head %} {% block body %}
 <script>
@@ -47,7 +47,7 @@
         class="flex items-center justify-center gap-2 my-4 select-none opacity-75"
     >
         <p class="text-sm font-medium">
-            {{ readingTime|string + " " + translations.post.minRead }}
+            {{ reading_time|string + " " + translations.post.min_read }}
         </p>
 
     </div>
@@ -67,7 +67,7 @@
             <a
                 target="_blank"
                 href="https://x.com/intent/tweet?text={{ title }} by {{ author }} on {{
-          appName
+          app_name
         }} {{ request.base_url }}"
             >
                 <i

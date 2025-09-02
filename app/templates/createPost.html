@@ -1,5 +1,5 @@
 {% extends 'layout.html' %} {% block head %}
-<title>{{ translations.createPost.title }}</title>
+<title>{{ translations.create_post.title }}</title>
 <link
     rel="stylesheet"
     href="{{ url_for('static', filename='css/markdownEditor.css') }}"
@@ -10,27 +10,27 @@
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
         {{ form.post_title(class_="input input-bordered w-full my-2",
-        autocomplete="off",placeholder=translations.createPost.titlePlaceholder)
+        autocomplete="off",placeholder=translations.create_post.title_placeholder)
         }} {{ form.post_tags(class_="input input-bordered w-full my-2",
-        autocomplete="off",placeholder=translations.createPost.tags) }} {{
+        autocomplete="off",placeholder=translations.create_post.tags) }} {{
         form.post_abstract(class_="textarea textarea-bordered w-full my-2",
-        autocomplete="off",placeholder=translations.createPost.abstractPlaceholder)
+        autocomplete="off",placeholder=translations.create_post.abstract_placeholder)
         }}
         <p class="text-xs text-center w-fit mx-auto mb-2">
-            {{ translations.createPost.separate }}
+            {{ translations.create_post.separate }}
         </p>
 
         <div class="w-72 mx-auto text-center mb-4">
             <label class="block mt-2 mb-1"
-                >{{ translations.createPost.banner }}</label
+                >{{ translations.create_post.banner }}</label
             >
             {{ form.post_banner(class_="file-input file-input-bordered w-full",
-            placeholder=translations.createPost.bannerPlaceholder) }}
+            placeholder=translations.create_post.banner_placeholder) }}
         </div>
 
         <div class="mx-auto w-fit">
             <label class="block my-1 text-center"
-                >{{ translations.createPost.category }}</label
+                >{{ translations.create_post.category }}</label
             >
             <select
                 class="select select-bordered w-72"
@@ -102,7 +102,7 @@
         </div>
 
         <button type="submit" class="btn btn-neutral btn-block mt-4">
-            {{ translations.createPost.post }}
+            {{ translations.create_post.post }}
         </button>
     </form>
     <script src="{{ url_for('static', filename='js/markdownEditor.js') }}"></script>

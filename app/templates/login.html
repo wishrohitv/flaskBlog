@@ -6,7 +6,7 @@
         {% if recaptcha %}
         <script src="https://www.google.com/recaptcha/api.js"></script>
         <script src="{{ url_for('static', filename='js/recaptcha.js') }}"></script>
-        <form method="post" id="recaptchaForm">
+        <form method="post" id="recaptcha-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <div class="card-body">
                 <h1 class="text-3xl font-bold self-center">

@@ -14,7 +14,7 @@ from flask import (
 
 from settings import Settings
 from utils.flash_message import flash_message
-from utils.forms.VerifyUserForm import VerifyUserForm
+from utils.forms.verify_user_form import VerifyUserForm
 from utils.log import Log
 
 verify_user_blueprint = Blueprint("verify_user", __name__)

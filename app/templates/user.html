@@ -4,7 +4,7 @@
 <meta property="og:title" content="{{user[1]}}" />
 <meta property="og:image" content="{{user[4]}}" />
 <meta property="og:url" content="{{request.base_url}}" />
-<meta property="og:site_name" content="{{appName}}" />
+<meta property="og:site_name" content="{{app_name}}" />
 <meta property="og:description" content="{{ user[1] }}'s Profile" />
 <meta name="twitter:image" content="{{user[4]}}" />
 <meta name="twitter:description" content="{{ user[1] }}'s Profile" />
@@ -37,7 +37,7 @@
         <section class="flex w-full justify-between my-4">
             <div class="flex items-center">
                 <i class="ti ti-calendar mr-1 text-xl"></i>
-                <p class="hidden md:block">{{translations.user.joinDate}}:</p>
+                <p class="hidden md:block">{{translations.user.join_date}}:</p>
                 <p class="ml-1 date font-medium">{{user[7]}}</p>
             </div>
             <div class="flex items-center">
@@ -115,14 +115,14 @@
             <div class="flex items-center">
                 <i class="ti ti-clock mr-1 text-xl"></i>
                 <p class="hidden md:block mr-1">
-                    {{translations.user.createTime}}:
+                    {{translations.user.create_time}}:
                 </p>
                 <p class="time font-medium">{{comment[4]}}</p>
             </div>
             <div class="flex items-center">
                 <i class="ti ti-calendar mr-1 text-xl"></i>
                 <p class="hidden md:block mr-1">
-                    {{translations.user.createDate}}:
+                    {{translations.user.create_date}}:
                 </p>
                 <p class="date font-medium">{{comment[4]}}</p>
             </div>

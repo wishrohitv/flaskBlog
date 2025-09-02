@@ -14,7 +14,7 @@ from requests import post as requests_post
 from settings import Settings
 from utils.add_points import add_points
 from utils.flash_message import flash_message
-from utils.forms.LoginForm import LoginForm
+from utils.forms.login_form import LoginForm
 from utils.log import Log
 
 login_blueprint = Blueprint("login", __name__)

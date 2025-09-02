@@ -15,7 +15,7 @@ from passlib.hash import sha512_crypt as encryption
 
 from settings import Settings
 from utils.flash_message import flash_message
-from utils.forms.PasswordResetForm import PasswordResetForm
+from utils.forms.password_reset_form import PasswordResetForm
 from utils.log import Log
 
 password_reset_blueprint = Blueprint("password_reset", __name__)

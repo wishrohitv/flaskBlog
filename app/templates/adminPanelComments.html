@@ -1,8 +1,8 @@
 {% extends 'layout.html' %} {% block head %}
-<title>{{translations.adminPanelComments.title}}</title>
+<title>{{translations.admin_panel_comments.title}}</title>
 {% endblock head %} {% block body %}
 <h1 class="my-4 text-4xl font-medium select-none text-center">
-    {{translations.adminPanelComments.comments}}
+    {{translations.admin_panel_comments.comments}}
 </h1>
 
 {% for comment in comments %}
@@ -12,7 +12,7 @@
     <div class="flex items-center justify-between mb-2">
         <div class="flex items-center">
             <i class="ti ti-id mr-1 text-xl"></i>
-            {{translations.adminPanelComments.postID}}:
+            {{translations.admin_panel_comments.post_id}}:
             <a
                 href="/post/{{ getPostUrlIdFromPost(comment[1]) }}"
                 class="ml-1 font-medium"
@@ -26,14 +26,14 @@
         <div class="flex items-center">
             <i class="ti ti-clock mr-1 text-xl"></i>
             <p class="hidden md:block mr-1">
-                {{translations.adminPanelComments.creationTime}}:
+                {{translations.admin_panel_comments.creation_time}}:
             </p>
             <p class="time font-medium">{{ comment[4] }}</p>
         </div>
         <div class="flex items-center">
             <i class="ti ti-calendar mr-1 text-xl"></i>
             <p class="hidden md:block mr-1">
-                {{translations.adminPanelComments.creationDate}}:
+                {{translations.admin_panel_comments.creation_date}}:
             </p>
             <p class="date font-medium">{{ comment[4] }}</p>
         </div>
@@ -44,7 +44,7 @@
         <div class="flex items-center">
             <i class="ti ti-user mr-1 text-xl"></i>
             <p class="hidden md:block mr-1">
-                {{translations.adminPanelComments.author}}:
+                {{translations.admin_panel_comments.author}}:
             </p>
             <a
                 href="/user/{{ comment[3].lower() }}"
