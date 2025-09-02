@@ -220,6 +220,3 @@ def comments_table():
         connection.close()
 
         Log.success(f'Table: "comments" created in "{Settings.DB_COMMENTS_ROOT}"')
-
-
-

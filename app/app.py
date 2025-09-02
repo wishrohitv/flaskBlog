@@ -283,7 +283,6 @@ app.register_blueprint(admin_panel_comments_blueprint)
 app.register_blueprint(change_profile_picture_blueprint)
 
 
-
 if __name__ == "__main__":
     Log.info(f"Running on http://{Settings.APP_HOST}:{Settings.APP_PORT}")
     Log.success("App started")

@@ -123,8 +123,6 @@ def post(url_id=None, slug=None):
         )
         comments = cursor.fetchall()
 
-
-
         return render_template(
             "post.html",
             id=post[0],
@@ -132,7 +130,7 @@ def post(url_id=None, slug=None):
             tags=post[2],
             abstract=post[11],
             content=post[3],
-            username=post[5],
+            author=post[5],
             views=post[6],
             time_stamp=post[7],
             last_edit_time_stamp=post[8],
@@ -142,7 +140,6 @@ def post(url_id=None, slug=None):
             app_name=Settings.APP_NAME,
             blog_post_url=request.root_url,
             reading_time=calculate_read_time(post[3]),
-
         )
 
     else:

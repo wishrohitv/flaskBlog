@@ -74,8 +74,6 @@ def delete_post(post_id):
     )
     connection.commit()
 
-
-
     flash_message(
         page="delete",
         message="post",
