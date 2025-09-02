@@ -70,16 +70,12 @@ def post(url_id=None, slug=None):
 
             if "comment_delete_button" in request.form:
                 delete_comment(request.form["comment_id"])
+
                 return redirect(url_for("post.post", url_id=url_id)), 301
 
-            # Handle new comment submission
             from markupsafe import escape
 
-            if form.validate():
-                comment = escape(form.comment.data)
-            else:
-                # Handle form validation errors - redirect without error message for now
-                return redirect(url_for("post.post", url_id=url_id)), 301
+            comment = escape(request.form["comment"])
 
             Log.database(f"Connecting to '{Settings.DB_COMMENTS_ROOT}' database")
 
