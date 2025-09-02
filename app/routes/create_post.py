@@ -67,7 +67,7 @@ def create_post():
                         tags,
                         content,
                         banner,
-                        username,
+                        author,
                         views,
                         time_stamp,
                         last_edit_time_stamp,

@@ -16,7 +16,6 @@ from utils.delete import delete_comment, delete_post
 from utils.flash_message import flash_message
 from utils.forms.comment_form import CommentForm
 from utils.generate_url_id_from_post import get_slug_from_post_title
-
 from utils.log import Log
 from utils.time import current_time_stamp
 
@@ -85,7 +84,7 @@ def post(url_id=None, slug=None):
             cursor = connection.cursor()
 
             cursor.execute(
-                "insert into comments(id,comment,username,time_stamp) \
+                "insert into comments(id,comment,user,time_stamp) \
                 values(?, ?, ?, ?)",
                 (
                     post[0],

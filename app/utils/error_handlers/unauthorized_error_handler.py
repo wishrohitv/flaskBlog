@@ -12,5 +12,5 @@ def unauthorized_error_handler(e):
     Returns:
         A tuple containing the rendered error template and HTTP status code 401.
     """
-    Log.error(e)
+    Log.error(f"401 Unauthorized: {str(e)}")
     return render_template("unauthorized.html"), 401

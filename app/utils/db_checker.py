@@ -14,6 +14,7 @@ from os import mkdir
 from os.path import exists
 
 from passlib.hash import sha512_crypt as encryption
+
 from settings import Settings
 from utils.log import Log
 from utils.time import current_time_stamp
@@ -154,7 +155,7 @@ def posts_table():
             "tags"  text not null,
             "content"   text not null,
             "banner"    BLOB not null,
-            "username"    text not null,
+            "author"    text not null,
             "views" integer,
             "time_stamp" integer,
             "last_edit_time_stamp" integer,
@@ -208,7 +209,7 @@ def comments_table():
             "id"    integer not null,
             "post_id"  integer,
             "comment"   text,
-            "username"  text,
+            "user"  text,
             "time_stamp" integer,
             primary key("id" autoincrement)
         );"""
