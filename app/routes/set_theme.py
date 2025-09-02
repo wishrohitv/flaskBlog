@@ -24,4 +24,4 @@ def set_theme(theme):
         Log.warning(f"Theme not supported: {theme}")
 
     # Redirect back to the page the user came from, or home if no referrer
-    return redirect(request.referrer or url_for("index"))
+    return redirect(request.referrer or url_for("index.index"))
