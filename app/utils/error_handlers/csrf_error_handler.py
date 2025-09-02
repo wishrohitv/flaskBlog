@@ -11,4 +11,4 @@ def csrf_error_handler(e):
     Returns:
         A tuple containing the rendered error template and HTTP status code 400.
     """
-    return render_template("csrfError.html"), 400
+    return render_template("csrf_error.html"), 400

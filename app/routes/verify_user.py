@@ -86,7 +86,7 @@ def verify_user(code_sent):
                 return render_template(
                     "verify_user.html",
                     form=form,
-                    mailSent=True,
+                    mail_sent=True,
                 )
             elif code_sent == "false":
                 if request.method == "POST":
@@ -163,7 +163,7 @@ def verify_user(code_sent):
                 return render_template(
                     "verify_user.html",
                     form=form,
-                    mailSent=False,
+                    mail_sent=False,
                 )
     else:
         Log.error(f"{request.remote_addr} tried to verify user without being logged in")

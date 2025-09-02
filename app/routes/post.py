@@ -148,4 +148,4 @@ def post(url_id=None, slug=None):
     else:
         Log.error(f"{request.remote_addr} tried to reach unknown post")
 
-        return render_template("notFound.html")
+        return render_template("not_found.html")

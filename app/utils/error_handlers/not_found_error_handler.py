@@ -13,4 +13,4 @@ def not_found_error_handler(e):
         A tuple containing the rendered error template and HTTP status code 404.
     """
     Log.error(e)
-    return render_template("notFound.html"), 404
+    return render_template("not_found.html"), 404

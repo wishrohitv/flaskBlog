@@ -15,6 +15,6 @@ class ChangeProfilePictureForm(Form):
     """
 
     new_profile_picture_seed = StringField(
-        "ProfilePictureSeed",
+        "profile_picture_seed",
         [validators.InputRequired()],
     )

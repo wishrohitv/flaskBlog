@@ -103,7 +103,7 @@ def password_reset(code_sent):
         return render_template(
             "password_reset.html",
             form=form,
-            mailSent=True,
+            mail_sent=True,
         )
     elif code_sent == "false":
         if request.method == "POST":
@@ -161,7 +161,7 @@ def password_reset(code_sent):
                     f'Password reset code: "{password_reset_code}" sent to "{email}" for user: "{username}"'
                 )
                 flash_message(
-                    page="passwordReset",
+                    page="password_reset",
                     message="code",
                     category="success",
                     language=session["language"],
@@ -171,7 +171,7 @@ def password_reset(code_sent):
                 Log.error(f'User: "{username}" with email: "{email}" not found')
                 flash_message(
                     page="password_reset",
-                    message="notFound",
+                    message="not_found",
                     category="error",
                     language=session["language"],
                 )
@@ -179,5 +179,5 @@ def password_reset(code_sent):
         return render_template(
             "password_reset.html",
             form=form,
-            mailSent=False,
+            mail_sent=False,
         )

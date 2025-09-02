@@ -66,7 +66,7 @@ def index(by="hot", sort="desc"):
     if by == "hot":
         select_query = (
             "SELECT *, (views * 1 / log(1 + (strftime('%s', 'now') - time_stamp) / 3600 + 2)) "
-            f"AS hotScore FROM posts ORDER BY hotScore {sort}"
+            f"AS hot_score FROM posts ORDER BY hot_score {sort}"
         )
     else:
         select_query = f"select * from posts order by {by} {sort}"
