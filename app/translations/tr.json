@@ -163,7 +163,7 @@
     "placeholder": "Düşünceleriniz nedir?",
     "viewPerformance": "Performansı Görüntüle"
   },
-  "sortMenu": {
+  "sort_menu": {
     "asc": "Artan",
     "desc": "Azalan",
     "create": "Oluşturma Tarihi",

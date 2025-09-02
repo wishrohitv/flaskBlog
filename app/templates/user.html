@@ -97,9 +97,9 @@
     <div
         class="flex item-center justify-center flex-wrap gap-x-2 gap-y-6 mx-auto w-11/12 md:w-10/12 lg:w-9/12 2xl:w-8/12 my-6"
     >
-        {% for post in posts %} {% from "components/postCardMacro.html" import
-        postCard%} {{
-        postCard(post=post,author_profile_picture=get_profile_picture(post[5]))
+        {% for post in posts %} {% from "components/post_card_macro.html" import
+        post_card%} {{
+        post_card(post=post,author_profile_picture=get_profile_picture(post[5]))
         }} {% endfor %}
     </div>
     {% endif %} {% if show_comments %}

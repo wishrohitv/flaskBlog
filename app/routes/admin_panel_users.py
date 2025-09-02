@@ -7,6 +7,7 @@ from flask import (
     request,
     session,
 )
+
 from settings import Settings
 from utils.change_user_role import change_user_role
 from utils.delete import delete_user
@@ -17,7 +18,7 @@ admin_panel_users_blueprint = Blueprint("admin_panel_users", __name__)
 
 
 @admin_panel_users_blueprint.route("/admin/users", methods=["GET", "POST"])
-@admin_panel_users_blueprint.route("/admin_panel/users", methods=["GET", "POST"])
+@admin_panel_users_blueprint.route("/admin-panel/users", methods=["GET", "POST"])
 def admin_panel_users():
     if "username" in session:
         Log.info(f"Admin: {session['username']} reached to users admin panel")
@@ -54,10 +55,10 @@ def admin_panel_users():
                 "select * from users",
             )
 
-            Log.info(f"Rendering adminPanelUsers.html: params: users={users}")
+            Log.info(f"Rendering admin_panel_users.html: params: users={users}")
 
             return render_template(
-                "adminPanelUsers.html",
+                "admin_panel_users.html",
                 users=users,
                 page=page,
                 total_pages=total_pages,

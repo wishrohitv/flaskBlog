@@ -12,6 +12,7 @@ from flask import (
     session,
 )
 from passlib.hash import sha512_crypt as encryption
+
 from settings import Settings
 from utils.flash_message import flash_message
 from utils.forms.PasswordResetForm import PasswordResetForm
@@ -24,7 +25,7 @@ password_reset_codes_storage = {}
 
 
 @password_reset_blueprint.route(
-    "/password_reset/codesent=<code_sent>", methods=["GET", "POST"]
+    "/password-reset/codesent=<code_sent>", methods=["GET", "POST"]
 )
 def password_reset(code_sent):
     """
@@ -62,7 +63,7 @@ def password_reset(code_sent):
                 if password == password_confirm:
                     if encryption.verify(password, old_password):
                         flash_message(
-                            page="passwordReset",
+                            page="password_reset",
                             message="same",
                             category="error",
                             language=session["language"],
@@ -78,7 +79,7 @@ def password_reset(code_sent):
                         connection.commit()
                         Log.success(f'User: "{username}" changed his password')
                         flash_message(
-                            page="passwordReset",
+                            page="password_reset",
                             message="success",
                             category="success",
                             language=session["language"],
@@ -86,21 +87,21 @@ def password_reset(code_sent):
                         return redirect("/login/redirect=&")
                 else:
                     flash_message(
-                        page="passwordReset",
+                        page="password_reset",
                         message="match",
                         category="error",
                         language=session["language"],
                     )
             else:
                 flash_message(
-                    page="passwordReset",
+                    page="password_reset",
                     message="wrong",
                     category="error",
                     language=session["language"],
                 )
 
         return render_template(
-            "passwordReset.html",
+            "password_reset.html",
             form=form,
             mailSent=True,
         )
@@ -165,18 +166,18 @@ def password_reset(code_sent):
                     category="success",
                     language=session["language"],
                 )
-                return redirect("/password_reset/codesent=true")
+                return redirect("/password-reset/codesent=true")
             else:
                 Log.error(f'User: "{username}" with email: "{email}" not found')
                 flash_message(
-                    page="passwordReset",
+                    page="password_reset",
                     message="notFound",
                     category="error",
                     language=session["language"],
                 )
 
         return render_template(
-            "passwordReset.html",
+            "password_reset.html",
             form=form,
             mailSent=False,
         )

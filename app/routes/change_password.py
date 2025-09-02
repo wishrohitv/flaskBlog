@@ -8,6 +8,7 @@ from flask import (
     session,
 )
 from passlib.hash import sha512_crypt as encryption
+
 from settings import Settings
 from utils.flash_message import flash_message
 from utils.forms.ChangePasswordForm import ChangePasswordForm
@@ -16,7 +17,7 @@ from utils.log import Log
 change_password_blueprint = Blueprint("change_password", __name__)
 
 
-@change_password_blueprint.route("/change_password", methods=["GET", "POST"])
+@change_password_blueprint.route("/change-password", methods=["GET", "POST"])
 def change_password():
     """
     This function is the route for the change password page.
@@ -100,7 +101,7 @@ def change_password():
                 )
 
         return render_template(
-            "changePassword.html",
+            "change_password.html",
             form=form,
         )
     else:
@@ -114,4 +115,4 @@ def change_password():
             language=session["language"],
         )
 
-        return redirect("/login/redirect=change_password")
+        return redirect("/login/redirect=change-password")

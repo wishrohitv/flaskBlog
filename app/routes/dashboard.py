@@ -9,6 +9,7 @@ from flask import (
     session,
     url_for,
 )
+
 from settings import Settings
 from utils.delete import delete_post
 from utils.flash_message import flash_message

@@ -1,6 +1,7 @@
 import sqlite3
 
 from flask import Blueprint, make_response, request, session
+
 from settings import Settings
 from utils.get_analytics_page_data import (
     get_analytics_page_country_graph_data,
@@ -13,7 +14,7 @@ return_post_analytics_data_blueprint = Blueprint(
 )
 
 
-@return_post_analytics_data_blueprint.route("/api/v1/postTrafficGraphData")
+@return_post_analytics_data_blueprint.route("/api/v1/post-traffic-graph-data")
 def return_post_traffic_graph_data() -> dict:
     """
     Retrieves traffic graph data for a given post.

@@ -1,4 +1,4 @@
-{% macro postCard(post, author_profile_picture) %}
+{% macro post_card(post, author_profile_picture) %}
 <div
     class="flex flex-col bg-base-200 rounded-box w-[20rem] h-[30rem] hover:scale-105 duration-150"
 >
@@ -14,7 +14,7 @@
         </h3>
 
         <a
-                            href="{{ url_for('post.post', slug=get_slug_from_post_title(post[1]), url_id=post[10]) }}"
+            href="{{ url_for('post.post', slug=get_slug_from_post_title(post[1]), url_id=post[10]) }}"
             class="link link-hover text-xl font-bold line-clamp-2 leading-tight"
             >{{ post[1] }}</a
         >

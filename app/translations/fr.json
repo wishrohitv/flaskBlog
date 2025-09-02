@@ -163,7 +163,7 @@
     "placeholder": "Quelles sont vos pensées ?",
     "viewPerformance": "Voir la Performance"
   },
-  "sortMenu": {
+  "sort_menu": {
     "asc": "Croissant",
     "desc": "Décroissant",
     "create": "Date de création",

@@ -3,7 +3,7 @@ from flask import Blueprint, redirect, request, session
 change_language_blueprint = Blueprint("change_language", __name__)
 
 
-@change_language_blueprint.route("/change_language", methods=["GET", "POST"])
+@change_language_blueprint.route("/change-language", methods=["GET", "POST"])
 def change_language():
     """
     This function is the route for the change language page.

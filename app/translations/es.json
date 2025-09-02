@@ -163,7 +163,7 @@
     "placeholder": "¿Cuáles son tus pensamientos?",
     "viewPerformance": "Ver Rendimiento"
   },
-  "sortMenu": {
+  "sort_menu": {
     "asc": "Ascendente",
     "desc": "Descendente",
     "create": "Fecha de Creación",

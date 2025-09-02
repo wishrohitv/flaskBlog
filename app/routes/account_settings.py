@@ -1,6 +1,7 @@
 import sqlite3
 
 from flask import Blueprint, redirect, render_template, request, session
+
 from settings import Settings
 from utils.delete import delete_user
 from utils.log import Log
@@ -8,7 +9,7 @@ from utils.log import Log
 account_settings_blueprint = Blueprint("account_settings", __name__)
 
 
-@account_settings_blueprint.route("/account_settings", methods=["GET", "POST"])
+@account_settings_blueprint.route("/account-settings", methods=["GET", "POST"])
 def account_settings():
     if "username" in session:
         Log.database(f"Connecting to '{Settings.DB_USERS_ROOT}' database")
@@ -27,7 +28,7 @@ def account_settings():
             return redirect("/")
 
         return render_template(
-            "accountSettings.html",
+            "account_settings.html",
             user=user,
         )
     else:
@@ -35,4 +36,4 @@ def account_settings():
             f"{request.remote_addr} tried to reach account settings without being logged in"
         )
 
-        return redirect("/login/redirect=&account_settings")
+        return redirect("/login/redirect=&account-settings")

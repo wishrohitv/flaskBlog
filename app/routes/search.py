@@ -2,6 +2,7 @@ import sqlite3
 from math import ceil
 
 from flask import Blueprint, render_template, request
+
 from settings import Settings
 from utils.log import Log
 

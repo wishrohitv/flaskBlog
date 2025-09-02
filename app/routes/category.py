@@ -10,6 +10,7 @@ purposes without permission is strictly prohibited.
 from json import load
 
 from flask import Blueprint, abort, redirect, render_template, session
+
 from settings import Settings
 from utils.log import Log
 from utils.paginate import paginate_query
@@ -82,7 +83,7 @@ def category(category, by="time_stamp", sort="desc"):
     with open(translation_file, "r", encoding="utf-8") as file:
         translations = load(file)
 
-    sort_name = translations["sortMenu"][by] + " - " + translations["sortMenu"][sort]
+    sort_name = translations["sort_menu"][by] + " - " + translations["sort_menu"][sort]
 
     Log.info(f"Sorting posts on category/{category} page by: {sort_name}")
 

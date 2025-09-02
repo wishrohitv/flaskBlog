@@ -7,6 +7,7 @@ from flask import (
     request,
     session,
 )
+
 from settings import Settings
 from utils.flash_message import flash_message
 from utils.forms.CreatePostForm import CreatePostForm
@@ -16,7 +17,7 @@ from utils.time import current_time_stamp
 edit_post_blueprint = Blueprint("edit_post", __name__)
 
 
-@edit_post_blueprint.route("/edit_post/<url_id>", methods=["GET", "POST"])
+@edit_post_blueprint.route("/edit-post/<url_id>", methods=["GET", "POST"])
 def edit_post(url_id):
     """
     This function handles the edit post route.
@@ -73,7 +74,7 @@ def edit_post(url_id):
 
                     if post_content == "" or post_abstract == "":
                         flash_message(
-                            page="editPost",
+                            page="edit_post",
                             message="empty",
                             category="error",
                             language=session["language"],
@@ -118,7 +119,7 @@ def edit_post(url_id):
                         connection.commit()
                         Log.success(f'Post: "{post_title}" edited')
                         flash_message(
-                            page="editPost",
+                            page="edit_post",
                             message="success",
                             category="success",
                             language=session["language"],
@@ -126,7 +127,7 @@ def edit_post(url_id):
                         return redirect(f"/post/{post[10]}")
 
                 return render_template(
-                    "/editPost.html",
+                    "/edit_post.html",
                     id=post[0],
                     title=post[1],
                     tags=post[2],
@@ -135,7 +136,7 @@ def edit_post(url_id):
                 )
             else:
                 flash_message(
-                    page="editPost",
+                    page="edit_post",
                     message="author",
                     category="error",
                     language=session["language"],
@@ -146,13 +147,13 @@ def edit_post(url_id):
                 return redirect("/")
         else:
             Log.error(f'Post: "{url_id}" not found')
-            return render_template("notFound.html")
+            return redirect("/not-found")
     else:
         Log.error(f"{request.remote_addr} tried to edit post without login")
         flash_message(
-            page="editPost",
+            page="edit_post",
             message="login",
             category="error",
             language=session["language"],
         )
-        return redirect(f"/login/redirect=&edit_post&{url_id}")
+        return redirect(f"/login/redirect=&edit-post&{url_id}")

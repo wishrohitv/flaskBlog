@@ -19,6 +19,7 @@ purposes without permission is strictly prohibited.
 from json import load
 
 from flask import Blueprint, redirect, render_template, session
+
 from settings import Settings
 from utils.log import Log
 from utils.paginate import paginate_query
@@ -86,7 +87,7 @@ def index(by="hot", sort="desc"):
     with open(translation_file, "r", encoding="utf-8") as file:
         translations = load(file)
 
-    translations = translations["sortMenu"]
+    translations = translations["sort_menu"]
 
     sort_name = translations[by] + " - " + translations[sort]
 

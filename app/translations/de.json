@@ -163,7 +163,7 @@
     "placeholder": "Was sind Ihre Gedanken?",
     "viewPerformance": "Leistung Anzeigen"
   },
-  "sortMenu": {
+  "sort_menu": {
     "asc": "Aufsteigend",
     "desc": "Absteigend",
     "create": "Erstellungsdatum",

@@ -163,7 +163,7 @@
     "placeholder": "あなたの考えは何ですか？",
     "viewPerformance": "パフォーマンスを表示"
   },
-  "sortMenu": {
+  "sort_menu": {
     "asc": "昇順",
     "desc": "降順",
     "create": "作成日",

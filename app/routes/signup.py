@@ -13,6 +13,7 @@ from flask import (
 )
 from passlib.hash import sha512_crypt as encryption
 from requests import post as requests_post
+
 from settings import Settings
 from utils.add_points import add_points
 from utils.flash_message import flash_message
@@ -162,7 +163,7 @@ def signup():
                             server.send_message(mail)
                             server.quit()
 
-                            return redirect("/verify_user/codesent=false")
+                            return redirect("/verify-user/codesent=false")
                         else:
                             Log.error(
                                 f'Username: "{username}" do not fits to ascii characters',

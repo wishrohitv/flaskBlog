@@ -4,7 +4,8 @@ This module contains the code for the posts analytics page.
 
 import sqlite3
 
-from flask import Blueprint, render_template, request, session
+from flask import Blueprint, redirect, render_template, request, session
+
 from settings import Settings
 from utils.get_analytics_page_data import (
     get_analytics_page_os_graph_data,
@@ -59,7 +60,7 @@ def analytics_post(url_id):
                 os_graph_data = get_analytics_page_os_graph_data(post[0])
 
                 return render_template(
-                    "postsAnalytics.html",
+                    "posts_analytics.html",
                     post=post,
                     todays_visitor=todays_visitor,
                     os_graph_data=os_graph_data,
@@ -68,7 +69,7 @@ def analytics_post(url_id):
             else:
                 Log.error(f"{request.remote_addr} tried to reach unknown post")
 
-                return render_template("notFound.html")
+                return redirect("not-found")
 
         else:
             Log.error(f"{request.remote_addr} tried to reach unknown post")

@@ -163,7 +163,7 @@
     "placeholder": "Co myślisz?",
     "viewPerformance": "Zobacz Wydajność"
   },
-  "sortMenu": {
+  "sort_menu": {
     "asc": "Rosnąco",
     "desc": "Malejąco",
     "create": "Data utworzenia",

@@ -11,6 +11,7 @@ from flask import (
     request,
     session,
 )
+
 from settings import Settings
 from utils.flash_message import flash_message
 from utils.forms.VerifyUserForm import VerifyUserForm
@@ -20,7 +21,7 @@ verify_user_blueprint = Blueprint("verify_user", __name__)
 
 
 @verify_user_blueprint.route(
-    "/verify_user/codesent=<code_sent>", methods=["GET", "POST"]
+    "/verify-user/codesent=<code_sent>", methods=["GET", "POST"]
 )
 def verify_user(code_sent):
     """
@@ -68,7 +69,7 @@ def verify_user(code_sent):
                         connection.commit()
                         Log.success(f'User: "{username}" has been verified')
                         flash_message(
-                            page="verifyUser",
+                            page="verify_user",
                             message="success",
                             category="success",
                             language=session["language"],
@@ -76,14 +77,14 @@ def verify_user(code_sent):
                         return redirect("/")
                     else:
                         flash_message(
-                            page="verifyUser",
+                            page="verify_user",
                             message="wrong",
                             category="error",
                             language=session["language"],
                         )
 
                 return render_template(
-                    "verifyUser.html",
+                    "verify_user.html",
                     form=form,
                     mailSent=True,
                 )
@@ -157,10 +158,10 @@ def verify_user(code_sent):
                             f'Verification code sent to "{email[0]}" for user: "{username}"'
                         )
 
-                        return redirect("/verify_user/codesent=true")
+                        return redirect("/verify-user/codesent=true")
 
                 return render_template(
-                    "verifyUser.html",
+                    "verify_user.html",
                     form=form,
                     mailSent=False,
                 )

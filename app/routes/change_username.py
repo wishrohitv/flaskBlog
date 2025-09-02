@@ -7,6 +7,7 @@ from flask import (
     request,
     session,
 )
+
 from settings import Settings
 from utils.flash_message import flash_message
 from utils.forms.ChangeUserNameForm import ChangeUserNameForm
@@ -15,7 +16,7 @@ from utils.log import Log
 change_username_blueprint = Blueprint("change_username", __name__)
 
 
-@change_username_blueprint.route("/change_username", methods=["GET", "POST"])
+@change_username_blueprint.route("/change-username", methods=["GET", "POST"])
 def change_username():
     """
     This function is the route for the change username page.
@@ -94,7 +95,7 @@ def change_username():
                     language=session["language"],
                 )
 
-                return redirect("/account_settings")
+                return redirect("/account-settings")
             else:
                 Log.error(f'User: "{new_username}" already exists')
                 flash_message(
@@ -105,7 +106,7 @@ def change_username():
                 )
 
         return render_template(
-            "changeUserName.html",
+            "change_username.html",
             form=form,
         )
     else:
@@ -119,4 +120,4 @@ def change_username():
             language=session["language"],
         )
 
-        return redirect("/login/redirect=change_username")
+        return redirect("/login/redirect=change-username")

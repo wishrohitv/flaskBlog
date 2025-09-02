@@ -5,6 +5,7 @@ This module contains the route for viewing user profiles.
 import sqlite3
 
 from flask import Blueprint, render_template
+
 from settings import Settings
 from utils.log import Log
 
@@ -90,4 +91,4 @@ def user(username):
         )
     else:
         Log.error(f'User: "{username}" not found')
-        return render_template("notFound.html")
+        return render_template("not_found.html")

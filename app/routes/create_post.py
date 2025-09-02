@@ -7,6 +7,7 @@ from flask import (
     request,
     session,
 )
+
 from settings import Settings
 from utils.add_points import add_points
 from utils.flash_message import flash_message
@@ -18,7 +19,7 @@ from utils.time import current_time_stamp
 create_post_blueprint = Blueprint("create_post", __name__)
 
 
-@create_post_blueprint.route("/create_post", methods=["GET", "POST"])
+@create_post_blueprint.route("/create-post", methods=["GET", "POST"])
 def create_post():
     """
     This function creates a new post for the user.
@@ -106,7 +107,7 @@ def create_post():
                 return redirect("/")
 
         return render_template(
-            "createPost.html",
+            "create_post.html",
             form=form,
         )
     else:
@@ -117,4 +118,4 @@ def create_post():
             category="error",
             language=session["language"],
         )
-        return redirect("/login/redirect=&create_post")
+        return redirect("/login/redirect=&create-post")

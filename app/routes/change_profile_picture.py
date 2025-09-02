@@ -7,6 +7,7 @@ from flask import (
     request,
     session,
 )
+
 from settings import Settings
 from utils.flash_message import flash_message
 from utils.forms.ChangeProfilePictureForm import ChangeProfilePictureForm
@@ -16,7 +17,7 @@ change_profile_picture_blueprint = Blueprint("change_profile_picture", __name__)
 
 
 @change_profile_picture_blueprint.route(
-    "/change_profile_picture", methods=["GET", "POST"]
+    "/change-profile-picture", methods=["GET", "POST"]
 )
 def change_profile_picture():
     """
@@ -59,10 +60,10 @@ def change_profile_picture():
                 language=session["language"],
             )
 
-            return redirect("/account_settings")
+            return redirect("/account-settings")
 
         return render_template(
-            "changeProfilePicture.html",
+            "change_profile_picture.html",
             form=form,
         )
     else:
@@ -76,4 +77,4 @@ def change_profile_picture():
             language=session["language"],
         )
 
-        return redirect("/login/redirect=change_profile_picture")
+        return redirect("/login/redirect=change-profile-picture")

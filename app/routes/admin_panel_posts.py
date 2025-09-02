@@ -5,6 +5,7 @@ from flask import (
     request,
     session,
 )
+
 from settings import Settings
 from utils.log import Log
 from utils.paginate import paginate_query
@@ -13,7 +14,7 @@ admin_panel_posts_blueprint = Blueprint("admin_panel_posts", __name__)
 
 
 @admin_panel_posts_blueprint.route("/admin/posts", methods=["GET", "POST"])
-@admin_panel_posts_blueprint.route("/admin_panel/posts", methods=["GET", "POST"])
+@admin_panel_posts_blueprint.route("/admin-panel/posts", methods=["GET", "POST"])
 def admin_panel_posts():
     if "username" in session:
         Log.info(f"Admin: {session['username']} reached to posts admin panel")

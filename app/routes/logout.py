@@ -5,6 +5,7 @@ The functions and methods used in this blueprint are imported from their actual 
 """
 
 from flask import Blueprint, redirect, session
+
 from utils.flash_message import flash_message
 
 logout_blueprint = Blueprint("logout", __name__)

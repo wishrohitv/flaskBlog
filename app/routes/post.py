@@ -8,6 +8,7 @@ from flask import (
     session,
     url_for,
 )
+
 from settings import Settings
 from utils.add_points import add_points
 from utils.calculate_read_time import calculate_read_time

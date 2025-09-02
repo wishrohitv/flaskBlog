@@ -3,6 +3,7 @@ This module contains the about page blueprint.
 """
 
 from flask import Blueprint, render_template
+
 from settings import Settings
 from utils.log import Log
 

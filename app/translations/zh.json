@@ -162,7 +162,7 @@
     "placeholder": "你有什么想法？",
     "viewPerformance": "查看性能"
   },
-  "sortMenu": {
+  "sort_menu": {
     "asc": "升序",
     "desc": "降序",
     "create": "创建日期",
