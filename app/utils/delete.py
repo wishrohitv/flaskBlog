@@ -74,18 +74,7 @@ def delete_post(post_id):
     )
     connection.commit()
 
-    connection = sqlite3.connect(Settings.DB_ANALYTICS_ROOT)
-    connection.set_trace_callback(Log.database)
-    cursor = connection.cursor()
-    cursor.execute(
-        """select post_id from posts_analytics where post_id = ? """,
-        [(post_id)],
-    )
-    cursor.execute(
-        """delete from posts_analytics where post_id = ? """,
-        [(post_id)],
-    )
-    connection.commit()
+
 
     flash_message(
         page="delete",

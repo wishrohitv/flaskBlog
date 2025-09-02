@@ -16,7 +16,7 @@ from utils.delete import delete_comment, delete_post
 from utils.flash_message import flash_message
 from utils.forms.CommentForm import CommentForm
 from utils.generate_url_id_from_post import get_slug_from_post_title
-from utils.get_data_from_user_ip import get_data_from_user_ip
+
 from utils.log import Log
 from utils.time import current_time_stamp
 
@@ -123,38 +123,7 @@ def post(url_id=None, slug=None):
         )
         comments = cursor.fetchall()
 
-        if Settings.ANALYTICS:
-            user_ip_data = get_data_from_user_ip(str(request.headers.get("User-Agent")))
-            id_for_random_visitor = None
-            if "username" in session:
-                session_user = session["username"]
-            else:
-                session_user = "unsigned_user"
-            if user_ip_data["status"] == 0:
-                Log.database(f"Connecting to '{Settings.DB_ANALYTICS_ROOT}' database")
 
-                connection = sqlite3.connect(Settings.DB_ANALYTICS_ROOT)
-                connection.set_trace_callback(Log.database)
-                cursor = connection.cursor()
-
-                cursor.execute(
-                    """insert into posts_analytics (id, visitor_username, country, os, continent, time_stamp) values (?,?,?,?,?,?) RETURNING id""",
-                    (
-                        post[0],
-                        session_user,
-                        user_ip_data["payload"]["country"],
-                        user_ip_data["payload"]["os"],
-                        user_ip_data["payload"]["continent"],
-                        current_time_stamp(),
-                    ),
-                )
-                id_for_random_visitor = cursor.fetchone()[0]
-                connection.commit()
-                connection.close()
-            else:
-                Log.error(f"Aborting posts_analytics, {user_ip_data['message']}")
-        else:
-            id_for_random_visitor = None
 
         return render_template(
             "post.html",
@@ -173,7 +142,7 @@ def post(url_id=None, slug=None):
             app_name=Settings.APP_NAME,
             blog_post_url=request.root_url,
             reading_time=calculate_read_time(post[3]),
-            id_for_random_visitor=id_for_random_visitor,
+
         )
 
     else:

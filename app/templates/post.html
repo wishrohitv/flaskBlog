@@ -49,13 +49,7 @@
         <p class="text-sm font-medium">
             {{ readingTime|string + " " + translations.post.minRead }}
         </p>
-        {% if author == session["username"] or "admin" == session["username"] %}
-        <a
-            href="/analytics/posts/{{ url_id }}"
-            class="shadow-lg hover:text-rose-500 duration-150"
-            >{{ translations.post.viewPerformance }}</a
-        >
-        {% endif %}
+
     </div>
 
     <div class="text-center font-sm max-w-full">{{ abstract }}</div>

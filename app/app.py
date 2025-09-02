@@ -64,15 +64,11 @@ from routes.password_reset import (
     password_reset_blueprint,
 )
 from routes.post import post_blueprint
-from routes.posts_analytics import (
-    analytics_blueprint,
-)
+
 from routes.privacy_policy import (
     privacy_policy_blueprint,
 )
-from routes.return_post_analytics_data import (
-    return_post_analytics_data_blueprint,
-)
+
 from routes.return_post_banner import (
     return_post_banner_blueprint,
 )
@@ -108,7 +104,6 @@ from utils.context_processor.return_user_profile_picture import (
 )
 from utils.context_processor.translations import inject_translations
 from utils.db_checker import (
-    analytics_table,
     comments_table,
     db_folder,
     posts_table,
@@ -228,7 +223,6 @@ db_folder()
 users_table()
 posts_table()
 comments_table()
-analytics_table()
 
 
 @app.errorhandler(404)
@@ -287,8 +281,7 @@ app.register_blueprint(account_settings_blueprint)
 app.register_blueprint(return_post_banner_blueprint)
 app.register_blueprint(admin_panel_comments_blueprint)
 app.register_blueprint(change_profile_picture_blueprint)
-app.register_blueprint(analytics_blueprint)
-app.register_blueprint(return_post_analytics_data_blueprint)
+
 
 
 if __name__ == "__main__":

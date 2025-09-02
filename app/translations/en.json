@@ -323,25 +323,5 @@
     "changesText": "We may update our Privacy Policy from time to time. Thus, you are advised to review this page periodically for any changes. We will notify you of any changes by posting the new Privacy Policy on this page. These changes are effective immediately after they are posted on this page.",
     "contact": "Contact Us",
     "contactText": "If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us. Mail:"
-  },
-  "analytics": {
-    "title": "Analytics",
-    "goToPage": "Go to page",
-    "totalVisitor": "Total Visitor",
-    "todaysVisitor": "Today's Visitor",
-    "category": "Category",
-    "onPosted": "On Posted",
-    "trafficCount": "Traffic Count",
-    "sincePosted": "Since Posted",
-    "last1month": "Last 1m",
-    "last7days": "Last 7d",
-    "last24hours": "Last 24h",
-    "last48hours": "Last 48h",
-    "traffic": "Traffic",
-    "visitorCounts": "Visitor Counts",
-    "computerOS": "Computer OS",
-    "topCountries": "Top Countries",
-    "visitor": "Visitor",
-    "viewAll": "View All"
   }
 }

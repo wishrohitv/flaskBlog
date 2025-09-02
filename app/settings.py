@@ -19,7 +19,6 @@ class Settings:
         LOG_IN (bool): Toggle user login feature.
         REGISTRATION (bool): Toggle user registration feature.
         LANGUAGES (list): Supported languages for the application.
-        ANALYTICS (bool): Enable or disable analytics feature for posts.
         TAMGA_LOGGER (bool): Toggle custom logging feature.
         WERKZEUG_LOGGER (bool): Toggle werkzeug logging feature.
         LOG_TO_FILE (bool): Toggle logging to file feature.
@@ -34,7 +33,7 @@ class Settings:
         DB_USERS_ROOT (str): Root path of the users database.
         DB_POSTS_ROOT (str): Root path of the posts database.
         DB_COMMENTS_ROOT (str): Root path of the comments database.
-        DB_ANALYTICS_ROOT (str): Root path of the analytics database.
+
         SMTP_SERVER (str): SMTP server address.
         SMTP_PORT (int): SMTP server port.
         SMTP_MAIL (str): SMTP mail address.
@@ -62,7 +61,6 @@ class Settings:
     # Feature Toggles
     LOG_IN = True
     REGISTRATION = True
-    ANALYTICS = True
 
     # Internationalization
     LANGUAGES = ["en", "tr", "es", "de", "zh", "fr", "uk", "ru", "pt", "ja", "pl", "hi"]
@@ -125,7 +123,6 @@ class Settings:
     DB_USERS_ROOT = DB_FOLDER_ROOT + "users.db"
     DB_POSTS_ROOT = DB_FOLDER_ROOT + "posts.db"
     DB_COMMENTS_ROOT = DB_FOLDER_ROOT + "comments.db"
-    DB_ANALYTICS_ROOT = DB_FOLDER_ROOT + "analytics.db"
 
     # SMTP Mail Configuration
     SMTP_SERVER = "smtp.gmail.com"
