@@ -14,9 +14,9 @@
             <i class="ti ti-id mr-1 text-xl"></i>
             {{translations.admin_panel_comments.post_id}}:
             <a
-                href="/post/{{ getPostUrlIdFromPost(comment[1]) }}"
+                href="/post/{{ url_id(comment[1]) }}"
                 class="ml-1 font-medium"
-                >{{ getPostUrlIdFromPost(comment[1]) }}</a
+                >{{ url_id(comment[1]) }}</a
             >
         </div>
     </div>
@@ -63,12 +63,12 @@
                 />
                 <input
                     type="hidden"
-                    name="commentID"
+                    name="comment_id"
                     value="{{ comment[0] }}"
                 />
                 <button
                     type="submit"
-                    name="commentDeleteButton"
+                    name="comment_delete_button"
                     class="hover:text-rose-500 duration-150 font-medium"
                 >
                     <i class="ti ti-trash-x mr-1 text-2xl"></i>

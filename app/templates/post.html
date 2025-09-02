@@ -26,7 +26,6 @@
 
 {% endblock head %} {% block body %}
 <script>
-    let visitorID = parseInt("{{ idForRandomVisitor | safe }}");
     const csrfToken = "{{ csrf_token() }}";
 </script>
 <div
@@ -49,7 +48,6 @@
         <p class="text-sm font-medium">
             {{ reading_time|string + " " + translations.post.min_read }}
         </p>
-
     </div>
 
     <div class="text-center font-sm max-w-full">{{ abstract }}</div>
@@ -151,12 +149,12 @@
                     />
                     <input
                         type="hidden"
-                        name="commentID"
+                        name="comment_id"
                         value="{{ comment[0] }}"
                     />
                     <button
                         type="submit"
-                        name="commentDeleteButton"
+                        name="comment_delete_button"
                         class="hover:text-rose-500 duration-150"
                     >
                         <i class="ti ti-trash-x mr-1 text-xl"></i>
@@ -189,5 +187,4 @@
     {% endif %}
 </div>
 
-<script src="{{ url_for('static', filename='js/post.js') }}"></script>
 {% endblock body %}

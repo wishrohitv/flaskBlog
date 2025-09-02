@@ -209,7 +209,7 @@ def comments_table():
             "id"    integer not null,
             "post_id"  integer,
             "comment"   text,
-            "user"  text,
+            "username"  text,
             "time_stamp" integer,
             primary key("id" autoincrement)
         );"""

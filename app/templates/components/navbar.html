@@ -50,13 +50,13 @@
             <i class="ti ti-logout text-2xl"></i>
         </a>
 
-        {% elif hideLogin %} {% if is_registration %}
+        {% elif hide_login %} {% if is_registration %}
         <a href="/signup">
             <button class="hover:text-rose-500 duration-150">
                 <i class="ti ti-user-plus text-2xl"></i>
             </button>
         </a>
-        {% endif %} {% elif hideSignUp %} {% if is_login %}
+        {% endif %} {% elif hide_sign_up %} {% if is_login %}
         <a href="/login/redirect=&">
             <button class="hover:text-rose-500 duration-150">
                 <i class="ti ti-login text-2xl"></i>

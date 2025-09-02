@@ -163,7 +163,7 @@ request.path == "/admin/posts" %}
     </section>
 
     <a
-        href="/post/{{ getPostUrlIdFromPost(comment[1]) }}"
+        href="/post/{{ url_id(comment[1]) }}"
         class="hover:text-rose-500 duration-150 font-medium"
         >{{translations.dashboard.go}}</a
     >

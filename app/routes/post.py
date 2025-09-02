@@ -70,12 +70,16 @@ def post(url_id=None, slug=None):
 
             if "comment_delete_button" in request.form:
                 delete_comment(request.form["comment_id"])
-
                 return redirect(url_for("post.post", url_id=url_id)), 301
 
+            # Handle new comment submission
             from markupsafe import escape
 
-            comment = escape(request.form["comment"])
+            if form.validate():
+                comment = escape(form.comment.data)
+            else:
+                # Handle form validation errors - redirect without error message for now
+                return redirect(url_for("post.post", url_id=url_id)), 301
 
             Log.database(f"Connecting to '{Settings.DB_COMMENTS_ROOT}' database")
 
@@ -84,7 +88,7 @@ def post(url_id=None, slug=None):
             cursor = connection.cursor()
 
             cursor.execute(
-                "insert into comments(id,comment,user,time_stamp) \
+                "insert into comments(id,comment,username,time_stamp) \
                 values(?, ?, ?, ?)",
                 (
                     post[0],
