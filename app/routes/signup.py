@@ -120,48 +120,58 @@ def signup():
                                 language=session["language"],
                             )
 
-                            # Send welcome email
-                            context = ssl.create_default_context()
-                            server = smtplib.SMTP(
-                                Settings.SMTP_SERVER, Settings.SMTP_PORT
-                            )
-                            server.ehlo()
-                            server.starttls(context=context)
-                            server.ehlo()
-                            server.login(Settings.SMTP_MAIL, Settings.SMTP_PASSWORD)
+                            # Send welcome email (with error handling)
+                            try:
+                                context = ssl.create_default_context()
+                                server = smtplib.SMTP(
+                                    Settings.SMTP_SERVER, Settings.SMTP_PORT
+                                )
+                                server.ehlo()
+                                server.starttls(context=context)
+                                server.ehlo()
+                                server.login(Settings.SMTP_MAIL, Settings.SMTP_PASSWORD)
 
-                            mail = EmailMessage()
-                            mail.set_content(
-                                f"Hi {username}👋,\n Welcome to {Settings.APP_NAME}"
-                            )
-                            mail.add_alternative(
-                                f"""\
-                            <html>
-                            <body>
-                                <div
-                                style="font-family: Arial, sans-serif;  max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius:0.5rem;"
-                                >
-                                <div style="text-align: center;">
-                                    <h1 style="color: #F43F5E;">
-                                    Hi {username}, <br />
-                                    Welcome to {Settings.APP_NAME}!
-                                    </h1>
-                                    <p style="font-size: 16px;">
-                                    We are glad you joined us.
-                                    </p>
-                                </div>
-                                </div>
-                            </body>
-                            </html>
-                            """,
-                                subtype="html",
-                            )
-                            mail["Subject"] = f"Welcome to {Settings.APP_NAME}"
-                            mail["From"] = Settings.SMTP_MAIL
-                            mail["To"] = email
+                                mail = EmailMessage()
+                                mail.set_content(
+                                    f"Hi {username}👋,\n Welcome to {Settings.APP_NAME}"
+                                )
+                                mail.add_alternative(
+                                    f"""\
+                                <html>
+                                <body>
+                                    <div
+                                    style="font-family: Arial, sans-serif;  max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius:0.5rem;"
+                                    >
+                                    <div style="text-align: center;">
+                                        <h1 style="color: #F43F5E;">
+                                        Hi {username}, <br />
+                                        Welcome to {Settings.APP_NAME}!
+                                        </h1>
+                                        <p style="font-size: 16px;">
+                                        We are glad you joined us.
+                                        </p>
+                                    </div>
+                                    </div>
+                                </body>
+                                </html>
+                                """,
+                                    subtype="html",
+                                )
+                                mail["Subject"] = f"Welcome to {Settings.APP_NAME}"
+                                mail["From"] = Settings.SMTP_MAIL
+                                mail["To"] = email
 
-                            server.send_message(mail)
-                            server.quit()
+                                server.send_message(mail)
+                                server.quit()
+                                Log.success(
+                                    f'Welcome email sent to "{email}" for user "{username}"'
+                                )
+
+                            except Exception as e:
+                                Log.error(
+                                    f'Failed to send welcome email to "{email}" for user "{username}": {str(e)}'
+                                )
+                                # Continue with signup process even if email fails
 
                             return redirect("/verify-user/codesent=false")
                         else:

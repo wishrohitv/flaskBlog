@@ -128,7 +128,7 @@ class Settings:
     SMTP_SERVER = "smtp.gmail.com"
     SMTP_PORT = 587
     SMTP_MAIL = "flaskblogdogukanurker@gmail.com"
-    SMTP_PASSWORD = "lsooxsmnsfnhnixy"  # replace this with your actual password
+    SMTP_PASSWORD = "icovdnrxcgfdswal"  # App Password without spaces
 
     # Default Admin Account Configuration
     DEFAULT_ADMIN = True
