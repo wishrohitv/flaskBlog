@@ -2,9 +2,9 @@
 This file contains the database schemas for the app.
 
 The database consists of three tables:
-1. Users: stores information about the users, including their username, email, password, profile picture, role, points, creation date, creation time, and verification status.
-2. Posts: stores information about the posts, including their title, tags, content, author, date, time, views, last edit date, and last edit time.
-3. Comments: stores information about the comments, including the post they are associated with, the comment text, the user who wrote the comment, the date, and the time.
+1. users: stores information about the users, including their username, email, password, profile picture, role, points, creation date, creation time, and verification status.
+2. posts: stores information about the posts, including their title, tags, content, author, date, time, views, last edit date, and last edit time.
+3. comments: stores information about the comments, including the post they are associated with, the comment text, the user who wrote the comment, the date, and the time.
 
 This file contains functions to create the tables if they do not already exist, and to ensure that they have the correct structure.
 """
@@ -70,7 +70,7 @@ def users_table():
         Log.error(f'Table: "users" not found in "{Settings.DB_USERS_ROOT}"')
 
         users_table_schema = """
-        create table if not exists Users(
+        create table if not exists users(
             "user_id"    integer not null unique,
             "username"  text unique,
             "email" text unique,
@@ -90,7 +90,7 @@ def users_table():
 
             cursor.execute(
                 """
-                insert into Users(username,email,password,profile_picture,role,points,time_stamp,is_verified) \
+                insert into users(username,email,password,profile_picture,role,points,time_stamp,is_verified) \
                 values(?,?,?,?,?,?,?,?)
                 """,
                 (
