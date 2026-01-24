@@ -1,9 +1,8 @@
-import sqlite3
 from math import ceil
 
 from flask import Blueprint, render_template, request
 
-from settings import Settings
+from models import Post, User
 from utils.log import Log
 
 search_blueprint = Blueprint("search", __name__)
@@ -20,118 +19,77 @@ def search(query):
 
     Log.info(f"Searching for query: {query}")
 
-    Log.database(f"Connecting to '{Settings.DB_USERS_ROOT}' database")
+    query_users = User.query.filter(User.username.ilike(f"%{query}%")).all()
+    query_users_no_space = User.query.filter(
+        User.username.ilike(f"%{query_no_white_space}%")
+    ).all()
+    all_users = list(set(query_users + query_users_no_space))
 
-    connection = sqlite3.connect(Settings.DB_USERS_ROOT)
-    connection.set_trace_callback(Log.database)
-    cursor = connection.cursor()
+    query_tags = Post.query.filter(
+        Post.tags.ilike(f"%{query}%")
+    ).order_by(Post.time_stamp.desc()).all()
+    query_tags_no_space = Post.query.filter(
+        Post.tags.ilike(f"%{query_no_white_space}%")
+    ).order_by(Post.time_stamp.desc()).all()
 
-    query_users = cursor.execute(
-        """select * from users where username like ? """,
-        [
-            ("%" + query + "%"),
-        ],
-    ).fetchall()
+    query_titles = Post.query.filter(
+        Post.title.ilike(f"%{query}%")
+    ).order_by(Post.time_stamp.desc()).all()
+    query_titles_no_space = Post.query.filter(
+        Post.title.ilike(f"%{query_no_white_space}%")
+    ).order_by(Post.time_stamp.desc()).all()
 
-    query_users = cursor.execute(
-        """select * from users where username like ? """,
-        [
-            ("%" + query_no_white_space + "%"),
-        ],
-    ).fetchall()
-    Log.database(f"Connecting to '{Settings.DB_POSTS_ROOT}' database")
+    query_authors = Post.query.filter(
+        Post.author.ilike(f"%{query}%")
+    ).order_by(Post.time_stamp.desc()).all()
+    query_authors_no_space = Post.query.filter(
+        Post.author.ilike(f"%{query_no_white_space}%")
+    ).order_by(Post.time_stamp.desc()).all()
 
-    connection = sqlite3.connect(Settings.DB_POSTS_ROOT)
-    connection.set_trace_callback(Log.database)
-    cursor = connection.cursor()
+    all_posts_set = set()
+    posts_ordered = []
 
-    query_tags = cursor.execute(
-        """select * from posts where tags like ? order by time_stamp desc""",
-        [
-            ("%" + query + "%"),
-        ],
-    ).fetchall()
+    for post in (
+        query_tags + query_tags_no_space +
+        query_titles + query_titles_no_space +
+        query_authors + query_authors_no_space
+    ):
+        if post.id not in all_posts_set:
+            all_posts_set.add(post.id)
+            posts_ordered.append(post)
 
-    query_titles = cursor.execute(
-        """select * from posts where title like ? order by time_stamp desc""",
-        [
-            ("%" + query + "%"),
-        ],
-    ).fetchall()
+    empty = not posts_ordered and not all_users
 
-    query_authors = cursor.execute(
-        """select * from posts where author like ? order by time_stamp desc""",
-        [
-            ("%" + query + "%"),
-        ],
-    ).fetchall()
-
-    query_tags = cursor.execute(
-        """select * from posts where tags like ? order by time_stamp desc""",
-        [
-            ("%" + query_no_white_space + "%"),
-        ],
-    ).fetchall()
-
-    query_titles = cursor.execute(
-        """select * from posts where title like ? order by time_stamp desc""",
-        [
-            ("%" + query_no_white_space + "%"),
-        ],
-    ).fetchall()
-
-    query_authors = cursor.execute(
-        """select * from posts where author like ? order by time_stamp desc""",
-        [
-            ("%" + query_no_white_space + "%"),
-        ],
-    ).fetchall()
-
-    posts = []
-
-    users = []
-
-    empty = False
-
-    if query_tags != []:
-        posts.append(query_tags)
-
-    if query_titles != []:
-        posts.append(query_titles)
-
-    if query_authors != []:
-        posts.append(query_authors)
-
-    if query_users != []:
-        users.append(query_users)
-
-    if not posts and not users:
-        empty = True
-
-    results_id = []
-
-    for post in posts:
-        for post in post:
-            if post[0] not in results_id:
-                results_id.append(post[0])
-
-    posts = []
-
-    for post_id in results_id:
-        cursor.execute(
-            """select * from posts where id = ? """,
-            [(post_id)],
-        )
-
-        posts.append(cursor.fetchall())
-
-    total_posts = len(posts)
+    total_posts = len(posts_ordered)
     total_pages = max(ceil(total_posts / per_page), 1)
     offset = (page - 1) * per_page
-    posts = posts[offset : offset + per_page]
+    paginated_posts = posts_ordered[offset:offset + per_page]
+
+    posts = [
+        [
+            (
+                p.id, p.title, p.tags, p.content, p.banner, p.author,
+                p.views, p.time_stamp, p.last_edit_time_stamp,
+                p.category, p.url_id, p.abstract,
+            ),
+        ]
+        for p in paginated_posts
+    ]
+
+    users = []
+    if all_users:
+        users_tuples = [
+            (
+                u.user_id, u.username, u.email, u.password,
+                u.profile_picture, u.role, u.points,
+                u.time_stamp, u.is_verified,
+            )
+            for u in all_users
+        ]
+        users.append(users_tuples)
 
     Log.info(
-        f"Rendering search.html: params: query={query} | users={users} | posts={len(posts)} | empty={empty}"
+        f"Rendering search.html: params: query={query} | users={len(all_users)} | posts={len(posts)} | empty={empty}"
     )
 
     return render_template(

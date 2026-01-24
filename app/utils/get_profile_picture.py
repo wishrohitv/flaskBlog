@@ -1,6 +1,6 @@
-import sqlite3
+from sqlalchemy import func
 
-from settings import Settings
+from models import User
 from utils.log import Log
 
 
@@ -14,23 +14,12 @@ def get_profile_picture(username):
     Returns:
         str or None: The profile picture URL of the user, or None if not found.
     """
-    Log.database(f"Connecting to '{Settings.DB_USERS_ROOT}' database")
+    user = User.query.filter(func.lower(User.username) == username.lower()).first()
 
-    connection = sqlite3.connect(Settings.DB_USERS_ROOT)
-    connection.set_trace_callback(Log.database)
-
-    cursor = connection.cursor()
-
-    cursor.execute(
-        """select profile_picture from users where lower(username) = ? """,
-        [(username.lower())],
-    )
-    try:
-        profile_picture = cursor.fetchone()[0]
-
+    if user:
+        profile_picture = user.profile_picture
         Log.info(f"Returning {username}'s profile picture: {profile_picture}")
-    except Exception:
-        profile_picture = None
+        return profile_picture
+    else:
         Log.error(f"Failed to retrieve profile picture for user: {username}")
-
-    return profile_picture
+        return None

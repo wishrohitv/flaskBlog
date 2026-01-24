@@ -103,12 +103,7 @@ from utils.context_processor.return_user_profile_picture import (
     return_user_profile_picture,
 )
 from utils.context_processor.translations import inject_translations
-from utils.db_checker import (
-    comments_table,
-    db_folder,
-    posts_table,
-    users_table,
-)
+from database import init_db
 from utils.error_handlers.csrf_error_handler import (
     csrf_error_handler,
 )
@@ -219,10 +214,7 @@ else:
     Log.info("Default admin is off")
 
 
-db_folder()
-users_table()
-posts_table()
-comments_table()
+init_db(app)
 
 
 @app.errorhandler(404)

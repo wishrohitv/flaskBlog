@@ -1,40 +1,27 @@
-import sqlite3
 from math import ceil
 
 from flask import request
+
 from utils.log import Log
 
 
-def paginate_query(db_path, count_query, select_query, params=None, per_page=9):
-    """Return paginated data for a given query.
+def paginate_query(query, per_page=9):
+    """Return paginated data for a SQLAlchemy query.
 
     Args:
-        db_path: Path to the SQLite database.
-        count_query: SQL query returning the total number of items.
-        select_query: SQL query returning items without limit and offset.
-        params: Parameters for the SQL queries.
+        query: SQLAlchemy query object.
         per_page: Number of items per page.
 
     Returns:
-        tuple: (rows, page, total_pages)
+        tuple: (items, page, total_pages)
     """
-    if params is None:
-        params = []
-
     page = request.args.get("page", 1, type=int)
 
-    Log.database(f"Connecting to '{db_path}' database")
+    Log.info(f"Paginating query, page {page}, per_page {per_page}")
 
-    connection = sqlite3.connect(db_path)
-    connection.set_trace_callback(Log.database)
-    cursor = connection.cursor()
+    pagination = query.paginate(page=page, per_page=per_page, error_out=False)
 
-    cursor.execute(count_query, params)
-    total_items = cursor.fetchone()[0]
-    total_pages = max(ceil(total_items / per_page), 1)
+    items = pagination.items
+    total_pages = max(pagination.pages, 1)
 
-    offset = (page - 1) * per_page
-    cursor.execute(f"{select_query} limit ? offset ?", (*params, per_page, offset))
-    rows = cursor.fetchall()
-
-    return rows, page, total_pages
+    return items, page, total_pages

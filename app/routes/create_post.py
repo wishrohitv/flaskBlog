@@ -1,5 +1,3 @@
-import sqlite3
-
 from flask import (
     Blueprint,
     redirect,
@@ -8,7 +6,8 @@ from flask import (
     session,
 )
 
-from settings import Settings
+from database import db
+from models import Post
 from utils.add_points import add_points
 from utils.flash_message import flash_message
 from utils.forms.create_post_form import CreatePostForm
@@ -56,43 +55,22 @@ def create_post():
                     f'User: "{session["username"]}" tried to create a post with empty content',
                 )
             else:
-                Log.database(f"Connecting to '{Settings.DB_POSTS_ROOT}' database")
-                connection = sqlite3.connect(Settings.DB_POSTS_ROOT)
-                connection.set_trace_callback(Log.database)
-                cursor = connection.cursor()
-                cursor.execute(
-                    """
-                    INSERT INTO posts (
-                        title,
-                        tags,
-                        content,
-                        banner,
-                        author,
-                        views,
-                        time_stamp,
-                        last_edit_time_stamp,
-                        category,
-                        url_id,
-                        abstract
-                    ) VALUES (
-                        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
-                    )
-                    """,
-                    (
-                        post_title,
-                        post_tags,
-                        post_content,
-                        post_banner,
-                        session["username"],
-                        0,
-                        current_time_stamp(),
-                        current_time_stamp(),
-                        post_category,
-                        generate_url_id(),
-                        post_abstract,
-                    ),
+                new_post = Post(
+                    title=post_title,
+                    tags=post_tags,
+                    content=post_content,
+                    banner=post_banner,
+                    author=session["username"],
+                    views=0,
+                    time_stamp=current_time_stamp(),
+                    last_edit_time_stamp=current_time_stamp(),
+                    category=post_category,
+                    url_id=generate_url_id(),
+                    abstract=post_abstract,
                 )
-                connection.commit()
+                db.session.add(new_post)
+                db.session.commit()
+
                 Log.success(
                     f'Post: "{post_title}" posted by "{session["username"]}"',
                 )

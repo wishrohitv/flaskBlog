@@ -1,5 +1,4 @@
 import smtplib
-import sqlite3
 import ssl
 from email.message import EmailMessage
 from random import randint
@@ -12,7 +11,10 @@ from flask import (
     session,
 )
 from passlib.hash import sha512_crypt as encryption
+from sqlalchemy import func
 
+from database import db
+from models import User
 from settings import Settings
 from utils.flash_message import flash_message
 from utils.forms.password_reset_form import PasswordResetForm
@@ -43,55 +45,55 @@ def password_reset(code_sent):
     form = PasswordResetForm(request.form)
 
     if code_sent == "true":
-        Log.database(f"Connecting to '{Settings.DB_USERS_ROOT}' database")
-
-        connection = sqlite3.connect(Settings.DB_USERS_ROOT)
-        connection.set_trace_callback(Log.database)
-        cursor = connection.cursor()
         if request.method == "POST":
             username = request.form["username"]
             username = username.replace(" ", "")
             code = request.form["code"]
             password = request.form["password"]
             password_confirm = request.form["password_confirm"]
-            if code == password_reset_codes_storage.get(username, ""):
-                cursor.execute(
-                    """select password from users where lower(username) = ? """,
-                    [(username.lower())],
-                )
-                old_password = cursor.fetchone()[0]
-                if password == password_confirm:
-                    if encryption.verify(password, old_password):
-                        flash_message(
-                            page="password_reset",
-                            message="same",
-                            category="error",
-                            language=session["language"],
-                        )
-                    else:
-                        password_reset_codes_storage.pop(username)
 
-                        password = encryption.hash(password)
-                        cursor.execute(
-                            """update users set password = ? where lower(username) = ? """,
-                            [(password), (username.lower())],
-                        )
-                        connection.commit()
-                        Log.success(f'User: "{username}" changed his password')
-                        flash_message(
-                            page="password_reset",
-                            message="success",
-                            category="success",
-                            language=session["language"],
-                        )
-                        return redirect("/login/redirect=&")
-                else:
+            if code == password_reset_codes_storage.get(username, ""):
+                user = User.query.filter(
+                    func.lower(User.username) == username.lower()
+                ).first()
+
+                if not user:
                     flash_message(
                         page="password_reset",
-                        message="match",
+                        message="not_found",
                         category="error",
                         language=session["language"],
                     )
+                else:
+                    if password == password_confirm:
+                        if encryption.verify(password, user.password):
+                            flash_message(
+                                page="password_reset",
+                                message="same",
+                                category="error",
+                                language=session["language"],
+                            )
+                        else:
+                            password_reset_codes_storage.pop(username)
+
+                            user.password = encryption.hash(password)
+                            db.session.commit()
+
+                            Log.success(f'User: "{username}" changed his password')
+                            flash_message(
+                                page="password_reset",
+                                message="success",
+                                category="success",
+                                language=session["language"],
+                            )
+                            return redirect("/login/redirect=&")
+                    else:
+                        flash_message(
+                            page="password_reset",
+                            message="match",
+                            category="error",
+                            language=session["language"],
+                        )
             else:
                 flash_message(
                     page="password_reset",
@@ -110,16 +112,13 @@ def password_reset(code_sent):
             username = request.form["username"]
             email = request.form["email"]
             username = username.replace(" ", "")
-            Log.database(f"Connecting to '{Settings.DB_USERS_ROOT}' database")
-            connection = sqlite3.connect(Settings.DB_USERS_ROOT)
-            connection.set_trace_callback(Log.database)
-            cursor = connection.cursor()
-            cursor.execute(
-                """select * from users where lower(username) = ? and lower(email) = ? """,
-                [username.lower(), email.lower()],
-            )
-            user_db = cursor.fetchone()
-            if user_db:
+
+            user = User.query.filter(
+                func.lower(User.username) == username.lower(),
+                func.lower(User.email) == email.lower()
+            ).first()
+
+            if user:
                 context = ssl.create_default_context()
                 server = smtplib.SMTP(Settings.SMTP_SERVER, Settings.SMTP_PORT)
                 server.ehlo()
@@ -130,7 +129,7 @@ def password_reset(code_sent):
                 password_reset_codes_storage[username] = password_reset_code
                 message = EmailMessage()
                 message.set_content(
-                    f"Hi {username}👋,\nForgot your password😶‍🌫️? No problem👌.\nHere is your password reset code🔢:\n{password_reset_code}"
+                    f"Hi {username},\nForgot your password? No problem.\nHere is your password reset code:\n{password_reset_code}"
                 )
                 message.add_alternative(
                     f"""\
@@ -152,7 +151,7 @@ def password_reset(code_sent):
                 """,
                     subtype="html",
                 )
-                message["Subject"] = "Forget Password?🔒"
+                message["Subject"] = "Forget Password?"
                 message["From"] = Settings.SMTP_MAIL
                 message["To"] = email
                 server.send_message(message)

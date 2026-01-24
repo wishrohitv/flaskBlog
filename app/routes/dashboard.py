@@ -1,4 +1,3 @@
-import sqlite3
 from json import load
 
 from flask import (
@@ -9,8 +8,9 @@ from flask import (
     session,
     url_for,
 )
+from sqlalchemy import func
 
-from settings import Settings
+from models import Comment, Post
 from utils.delete import delete_post
 from utils.flash_message import flash_message
 from utils.log import Log
@@ -31,38 +31,32 @@ def dashboard(username):
                         redirect(url_for("dashboard.dashboard", username=username)),
                         301,
                     )
-            posts, page, total_pages = paginate_query(
-                Settings.DB_POSTS_ROOT,
-                "select count(*) from posts where author = ?",
-                "select * from posts where author = ? order by time_stamp desc",
-                [session["username"]],
+
+            query = Post.query.filter_by(author=session["username"]).order_by(
+                Post.time_stamp.desc()
             )
-            Log.database(f"Connecting to '{Settings.DB_COMMENTS_ROOT}' database")
+            posts_objects, page, total_pages = paginate_query(query)
 
-            connection = sqlite3.connect(Settings.DB_COMMENTS_ROOT)
-            connection.set_trace_callback(Log.database)
-            cursor = connection.cursor()
+            posts = [
+                [
+                    p.id, p.title, p.tags, p.content, p.banner, p.author,
+                    p.views, p.time_stamp, p.last_edit_time_stamp,
+                    p.category, p.url_id, p.abstract,
+                ]
+                for p in posts_objects
+            ]
 
-            cursor.execute(
-                """select * from comments where lower(user) = ? order by time_stamp desc""",
-                [(username.lower())],
-            )
-            comments = cursor.fetchall()
+            comments_objects = Comment.query.filter(
+                func.lower(Comment.username) == username.lower()
+            ).order_by(Comment.time_stamp.desc()).all()
 
-            if posts == []:
-                show_posts = False
-            else:
-                show_posts = True
+            comments = [
+                (c.id, c.post_id, c.comment, c.username, c.time_stamp)
+                for c in comments_objects
+            ]
 
-            if comments == []:
-                show_comments = False
-            else:
-                show_comments = True
-
-            posts = list(posts)
-
-            for i in range(len(posts)):
-                posts[i] = list(posts[i])
+            show_posts = len(posts) > 0
+            show_comments = len(comments) > 0
 
             language = session.get("language")
             translation_file = f"./translations/{language}.json"

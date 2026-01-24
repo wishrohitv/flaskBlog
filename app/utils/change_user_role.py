@@ -1,7 +1,8 @@
-import sqlite3
-
 from flask import redirect, session
-from settings import Settings
+from sqlalchemy import func
+
+from database import db
+from models import User
 from utils.log import Log
 
 
@@ -9,28 +10,20 @@ def change_user_role(username):
     """
     Changes the role of the user with the specified username.
     """
-    username = username.lower()
-    Log.database(f"Connecting to '{Settings.DB_USERS_ROOT}' database")
-    connection = sqlite3.connect(Settings.DB_USERS_ROOT)
-    connection.set_trace_callback(Log.database)
-    cursor = connection.cursor()
-    cursor.execute(
-        """select role from users where lower(username) = ? """,
-        [(username)],
-    )
-    role = cursor.fetchone()[0]
-    if role == "admin":
-        new_role = "user"
-    elif role == "user":
-        new_role = "admin"
-    cursor.execute(
-        """update users set role = ? where lower(username) = ? """,
-        [(new_role), (username)],
-    )
+    user = User.query.filter(func.lower(User.username) == username.lower()).first()
+
+    if not user:
+        Log.error(f'User "{username}" not found')
+        return
+
+    new_role = "user" if user.role == "admin" else "admin"
+    user.role = new_role
+    db.session.commit()
+
     Log.success(
         f'Admin: "{session["username"]}" changed user: "{username}"s role to "{new_role}" ',
     )
-    connection.commit()
-    if session["username"].lower() == username:
+
+    if session["username"].lower() == username.lower():
         Log.success(f'Admin: "{session["username"]}" changed his role to "user"')
         return redirect("/")

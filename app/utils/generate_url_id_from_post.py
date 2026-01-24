@@ -1,16 +1,10 @@
-import sqlite3
 import uuid
 
-from settings import Settings
-from utils.log import Log
+from models import Post
 
 
 def check_if_url_id_exists_in_post_db(url_id):
-    with sqlite3.connect(Settings.DB_POSTS_ROOT) as connection:
-        connection.set_trace_callback(Log.database)
-        cursor = connection.cursor()
-        cursor.execute("SELECT url_id FROM posts WHERE url_id = ?", (url_id,))
-        return bool(cursor.fetchall())
+    return Post.query.filter_by(url_id=url_id).first() is not None
 
 
 AVOID_CHARACTERS = [

@@ -1,5 +1,3 @@
-import sqlite3
-
 from flask import (
     Blueprint,
     redirect,
@@ -9,7 +7,8 @@ from flask import (
 )
 from passlib.hash import sha512_crypt as encryption
 
-from settings import Settings
+from database import db
+from models import User
 from utils.flash_message import flash_message
 from utils.forms.change_password_form import ChangePasswordForm
 from utils.log import Log
@@ -37,18 +36,19 @@ def change_password():
             old_password = request.form["old_password"]
             password = request.form["password"]
             password_confirm = request.form["password_confirm"]
-            Log.database(f"Connecting to '{Settings.DB_USERS_ROOT}' database")
 
-            connection = sqlite3.connect(Settings.DB_USERS_ROOT)
-            connection.set_trace_callback(Log.database)
-            cursor = connection.cursor()
+            user = User.query.filter_by(username=session["username"]).first()
 
-            cursor.execute(
-                """select password from users where username = ? """,
-                [(session["username"])],
-            )
+            if not user:
+                flash_message(
+                    page="change_password",
+                    message="login",
+                    category="error",
+                    language=session["language"],
+                )
+                return redirect("/login/redirect=change-password")
 
-            if encryption.verify(old_password, cursor.fetchone()[0]):
+            if encryption.verify(old_password, user.password):
                 if old_password == password:
                     flash_message(
                         page="change_password",
@@ -66,18 +66,8 @@ def change_password():
                     )
 
                 if old_password != password and password == password_confirm:
-                    new_password = encryption.hash(password)
-                    Log.database(f"Connecting to '{Settings.DB_USERS_ROOT}' database")
-
-                    connection = sqlite3.connect(Settings.DB_USERS_ROOT)
-                    connection.set_trace_callback(Log.database)
-                    cursor = connection.cursor()
-                    cursor.execute(
-                        """update users set password = ? where username = ? """,
-                        [(new_password), (session["username"])],
-                    )
-
-                    connection.commit()
+                    user.password = encryption.hash(password)
+                    db.session.commit()
 
                     Log.success(
                         f'User: "{session["username"]}" changed his password',

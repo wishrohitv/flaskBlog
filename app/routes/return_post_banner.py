@@ -1,9 +1,8 @@
-import sqlite3
 from io import BytesIO
 
-from flask import Blueprint, request, send_file
+from flask import Blueprint, abort, request, send_file
 
-from settings import Settings
+from models import Post
 from utils.log import Log
 
 return_post_banner_blueprint = Blueprint("return_post_banner", __name__)
@@ -21,19 +20,12 @@ def return_post_banner(post_id):
         The banner image for the given post ID as a Flask Response object.
 
     """
-    Log.database(f"Connecting to '{Settings.DB_POSTS_ROOT}' database")
+    post = Post.query.get(post_id)
 
-    connection = sqlite3.connect(Settings.DB_POSTS_ROOT)
-    connection.set_trace_callback(Log.database)
+    if not post or not post.banner:
+        abort(404)
 
-    cursor = connection.cursor()
-
-    cursor.execute(
-        """select banner from posts where id = ? """,
-        [(post_id)],
-    )
-
-    image = BytesIO(cursor.fetchone()[0])
+    image = BytesIO(post.banner)
 
     Log.info(f"Post: {post_id} | Image: {request.base_url} loaded")
 

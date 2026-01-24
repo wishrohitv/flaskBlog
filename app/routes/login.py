@@ -1,5 +1,3 @@
-import sqlite3
-
 from flask import (
     Blueprint,
     abort,
@@ -10,7 +8,9 @@ from flask import (
 )
 from passlib.hash import sha512_crypt as encryption
 from requests import post as requests_post
+from sqlalchemy import func
 
+from models import User
 from settings import Settings
 from utils.add_points import add_points
 from utils.flash_message import flash_message
@@ -48,15 +48,11 @@ def login(direct):
                 username = request.form["username"]
                 password = request.form["password"]
                 username = username.replace(" ", "")
-                Log.database(f"Connecting to '{Settings.DB_USERS_ROOT}' database")
-                connection = sqlite3.connect(Settings.DB_USERS_ROOT)
-                connection.set_trace_callback(Log.database)
-                cursor = connection.cursor()
-                cursor.execute(
-                    """select * from users where lower(username) = ? """,
-                    [(username.lower())],
-                )
-                user = cursor.fetchone()
+
+                user = User.query.filter(
+                    func.lower(User.username) == username.lower()
+                ).first()
+
                 if not user:
                     Log.error(f'User: "{username}" not found')
                     flash_message(
@@ -66,7 +62,7 @@ def login(direct):
                         language=session["language"],
                     )
                 else:
-                    if encryption.verify(password, user[3]):
+                    if encryption.verify(password, user.password):
                         if Settings.RECAPTCHA:
                             secret_response = request.form["g-recaptcha-response"]
                             verify_response = requests_post(
@@ -85,10 +81,10 @@ def login(direct):
                                 f"Login reCAPTCHA | verification: {verify_response['success']} | score: {verify_response.get('score')}",
                             )
 
-                        session["username"] = user[1]
-                        session["user_role"] = user[5]
+                        session["username"] = user.username
+                        session["user_role"] = user.role
                         add_points(1, session["username"])
-                        Log.success(f'User: "{user[1]}" logged in')
+                        Log.success(f'User: "{user.username}" logged in')
                         flash_message(
                             page="login",
                             message="success",

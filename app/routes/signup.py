@@ -1,5 +1,4 @@
 import smtplib
-import sqlite3
 import ssl
 from email.message import EmailMessage
 
@@ -13,7 +12,10 @@ from flask import (
 )
 from passlib.hash import sha512_crypt as encryption
 from requests import post as requests_post
+from sqlalchemy import func
 
+from database import db
+from models import User
 from settings import Settings
 from utils.add_points import add_points
 from utils.flash_message import flash_message
@@ -51,21 +53,22 @@ def signup():
                 password_confirm = request.form["password_confirm"]
 
                 username = username.replace(" ", "")
-                Log.database(f"Connecting to '{Settings.DB_USERS_ROOT}' database")
 
-                connection = sqlite3.connect(Settings.DB_USERS_ROOT)
-                connection.set_trace_callback(Log.database)
-                cursor = connection.cursor()
+                # Check if username or email already exists
+                existing_user = User.query.filter(
+                    func.lower(User.username) == username.lower()
+                ).first()
+                existing_email = User.query.filter(
+                    func.lower(User.email) == email.lower()
+                ).first()
 
-                cursor.execute("select username from users")
-                users = str(cursor.fetchall())
-                cursor.execute("select email from users")
-                mails = str(cursor.fetchall())
+                username_taken = existing_user is not None
+                email_taken = existing_email is not None
 
-                if username not in users and email not in mails:
+                if not username_taken and not email_taken:
                     if password_confirm == password:
                         if username.isascii():
-                            password = encryption.hash(password)
+                            hashed_password = encryption.hash(password)
 
                             if Settings.RECAPTCHA:
                                 secret_response = request.form["g-recaptcha-response"]
@@ -86,26 +89,18 @@ def signup():
                                 )
 
                             # Create user account
-                            connection = sqlite3.connect(Settings.DB_USERS_ROOT)
-                            connection.set_trace_callback(Log.database)
-                            cursor = connection.cursor()
-                            cursor.execute(
-                                """
-                                insert into users(username,email,password,profile_picture,role,points,time_stamp,is_verified) \
-                                values(?, ?, ?, ?, ?, ?, ?, ?)
-                                """,
-                                (
-                                    username,
-                                    email,
-                                    password,
-                                    f"https://api.dicebear.com/7.x/identicon/svg?seed={username}&radius=10",
-                                    "user",
-                                    0,
-                                    current_time_stamp(),
-                                    "False",
-                                ),
+                            new_user = User(
+                                username=username,
+                                email=email,
+                                password=hashed_password,
+                                profile_picture=f"https://api.dicebear.com/7.x/identicon/svg?seed={username}&radius=10",
+                                role="user",
+                                points=0,
+                                time_stamp=current_time_stamp(),
+                                is_verified="False",
                             )
-                            connection.commit()
+                            db.session.add(new_user)
+                            db.session.commit()
 
                             Log.success(f'User: "{username}" added to database')
 
@@ -133,7 +128,7 @@ def signup():
 
                                 mail = EmailMessage()
                                 mail.set_content(
-                                    f"Hi {username}👋,\n Welcome to {Settings.APP_NAME}"
+                                    f"Hi {username},\n Welcome to {Settings.APP_NAME}"
                                 )
                                 mail.add_alternative(
                                     f"""\
@@ -194,7 +189,7 @@ def signup():
                             language=session["language"],
                         )
 
-                if username in users and email in mails:
+                if username_taken and email_taken:
                     Log.error(f'"{username}" & "{email}" is unavailable ')
                     flash_message(
                         page="signup",
@@ -202,7 +197,7 @@ def signup():
                         category="error",
                         language=session["language"],
                     )
-                if username not in users and email in mails:
+                if not username_taken and email_taken:
                     Log.error(f'This email "{email}" is unavailable')
 
                     flash_message(
@@ -212,7 +207,7 @@ def signup():
                         language=session["language"],
                     )
 
-                if username in users and email not in mails:
+                if username_taken and not email_taken:
                     Log.error(f'This username "{username}" is unavailable')
 
                     flash_message(
