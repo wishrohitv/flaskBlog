@@ -27,7 +27,9 @@ def admin_panel_comments():
             for c in comments_objects
         ]
 
-        Log.info(f"Rendering admin_panel_comments.html: params: comments={len(comments)}")
+        Log.info(
+            f"Rendering admin_panel_comments.html: params: comments={len(comments)}"
+        )
 
         return render_template(
             "admin_panel_comments.html",

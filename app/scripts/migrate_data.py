@@ -86,7 +86,9 @@ def get_legacy_comments():
     conn = sqlite3.connect(LEGACY_COMMENTS_DB)
     cursor = conn.cursor()
     try:
-        cursor.execute("SELECT id, post_id, comment, username, time_stamp FROM comments")
+        cursor.execute(
+            "SELECT id, post_id, comment, username, time_stamp FROM comments"
+        )
         return cursor.fetchall()
     except sqlite3.OperationalError:
         return []
@@ -101,7 +103,8 @@ def migrate_data():
     print("=" * 60)
 
     legacy_exists = any(
-        os.path.exists(db) for db in [LEGACY_USERS_DB, LEGACY_POSTS_DB, LEGACY_COMMENTS_DB]
+        os.path.exists(db)
+        for db in [LEGACY_USERS_DB, LEGACY_POSTS_DB, LEGACY_COMMENTS_DB]
     )
 
     if not legacy_exists:
@@ -142,16 +145,30 @@ def migrate_data():
         print("\n4. Migrating users...")
         users_migrated = 0
         for user_data in legacy_users:
-            (user_id, username, email, password, profile_picture,
-             role, points, time_stamp, is_verified) = user_data
+            (
+                user_id,
+                username,
+                email,
+                password,
+                profile_picture,
+                role,
+                points,
+                time_stamp,
+                is_verified,
+            ) = user_data
 
             if User.query.filter_by(username=username).first():
                 continue
 
             user = User(
-                username=username, email=email, password=password,
-                profile_picture=profile_picture, role=role, points=points,
-                time_stamp=time_stamp, is_verified=is_verified,
+                username=username,
+                email=email,
+                password=password,
+                profile_picture=profile_picture,
+                role=role,
+                points=points,
+                time_stamp=time_stamp,
+                is_verified=is_verified,
             )
             db.session.add(user)
             users_migrated += 1
@@ -164,8 +181,20 @@ def migrate_data():
         post_id_mapping = {}
 
         for post_data in legacy_posts:
-            (old_id, title, tags, content, banner, author, views,
-             time_stamp, last_edit_time_stamp, category, url_id, abstract) = post_data
+            (
+                old_id,
+                title,
+                tags,
+                content,
+                banner,
+                author,
+                views,
+                time_stamp,
+                last_edit_time_stamp,
+                category,
+                url_id,
+                abstract,
+            ) = post_data
 
             existing = Post.query.filter_by(url_id=url_id).first()
             if existing:
@@ -173,11 +202,17 @@ def migrate_data():
                 continue
 
             post = Post(
-                title=title, tags=tags, content=content,
-                banner=banner if banner else b"", author=author,
-                views=views or 0, time_stamp=time_stamp,
+                title=title,
+                tags=tags,
+                content=content,
+                banner=banner if banner else b"",
+                author=author,
+                views=views or 0,
+                time_stamp=time_stamp,
                 last_edit_time_stamp=last_edit_time_stamp,
-                category=category, url_id=url_id, abstract=abstract or "",
+                category=category,
+                url_id=url_id,
+                abstract=abstract or "",
             )
             db.session.add(post)
             db.session.flush()
@@ -198,8 +233,10 @@ def migrate_data():
                 continue
 
             comment = Comment(
-                post_id=new_post_id, comment=comment_text,
-                username=username, time_stamp=time_stamp,
+                post_id=new_post_id,
+                comment=comment_text,
+                username=username,
+                time_stamp=time_stamp,
             )
             db.session.add(comment)
             comments_migrated += 1

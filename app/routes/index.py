@@ -57,9 +57,18 @@ def index(by="hot", sort="desc"):
 
     posts = [
         (
-            p.id, p.title, p.tags, p.content, p.banner, p.author,
-            p.views, p.time_stamp, p.last_edit_time_stamp,
-            p.category, p.url_id, p.abstract,
+            p.id,
+            p.title,
+            p.tags,
+            p.content,
+            p.banner,
+            p.author,
+            p.views,
+            p.time_stamp,
+            p.last_edit_time_stamp,
+            p.category,
+            p.url_id,
+            p.abstract,
         )
         for p in posts_objects
     ]

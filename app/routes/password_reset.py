@@ -115,7 +115,7 @@ def password_reset(code_sent):
 
             user = User.query.filter(
                 func.lower(User.username) == username.lower(),
-                func.lower(User.email) == email.lower()
+                func.lower(User.email) == email.lower(),
             ).first()
 
             if user:

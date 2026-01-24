@@ -10,7 +10,9 @@ db = SQLAlchemy()
 
 def init_db(app):
     app.config["SQLALCHEMY_DATABASE_URI"] = Settings.SQLALCHEMY_DATABASE_URI
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = Settings.SQLALCHEMY_TRACK_MODIFICATIONS
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = (
+        Settings.SQLALCHEMY_TRACK_MODIFICATIONS
+    )
 
     db.init_app(app)
 
@@ -26,7 +28,9 @@ def _create_default_admin():
 
     from models import User
 
-    existing_admin = User.query.filter_by(username=Settings.DEFAULT_ADMIN_USERNAME).first()
+    existing_admin = User.query.filter_by(
+        username=Settings.DEFAULT_ADMIN_USERNAME
+    ).first()
 
     if existing_admin:
         Log.info(f'Admin: "{Settings.DEFAULT_ADMIN_USERNAME}" already exists')

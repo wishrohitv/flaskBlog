@@ -47,9 +47,15 @@ def admin_panel_users():
 
             users = [
                 (
-                    u.user_id, u.username, u.email, u.password,
-                    u.profile_picture, u.role, u.points,
-                    u.time_stamp, u.is_verified,
+                    u.user_id,
+                    u.username,
+                    u.email,
+                    u.password,
+                    u.profile_picture,
+                    u.role,
+                    u.points,
+                    u.time_stamp,
+                    u.is_verified,
                 )
                 for u in users_objects
             ]

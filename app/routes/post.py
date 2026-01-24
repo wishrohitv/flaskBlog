@@ -76,13 +76,14 @@ def post(url_id=None, slug=None):
 
             return redirect(url_for("post.post", url_id=url_id)), 301
 
-        comments = Comment.query.filter_by(post_id=post.id).order_by(
-            Comment.time_stamp.desc()
-        ).all()
+        comments = (
+            Comment.query.filter_by(post_id=post.id)
+            .order_by(Comment.time_stamp.desc())
+            .all()
+        )
 
         comments_tuples = [
-            (c.id, c.post_id, c.comment, c.username, c.time_stamp)
-            for c in comments
+            (c.id, c.post_id, c.comment, c.username, c.time_stamp) for c in comments
         ]
 
         return render_template(

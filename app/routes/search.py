@@ -25,34 +25,49 @@ def search(query):
     ).all()
     all_users = list(set(query_users + query_users_no_space))
 
-    query_tags = Post.query.filter(
-        Post.tags.ilike(f"%{query}%")
-    ).order_by(Post.time_stamp.desc()).all()
-    query_tags_no_space = Post.query.filter(
-        Post.tags.ilike(f"%{query_no_white_space}%")
-    ).order_by(Post.time_stamp.desc()).all()
+    query_tags = (
+        Post.query.filter(Post.tags.ilike(f"%{query}%"))
+        .order_by(Post.time_stamp.desc())
+        .all()
+    )
+    query_tags_no_space = (
+        Post.query.filter(Post.tags.ilike(f"%{query_no_white_space}%"))
+        .order_by(Post.time_stamp.desc())
+        .all()
+    )
 
-    query_titles = Post.query.filter(
-        Post.title.ilike(f"%{query}%")
-    ).order_by(Post.time_stamp.desc()).all()
-    query_titles_no_space = Post.query.filter(
-        Post.title.ilike(f"%{query_no_white_space}%")
-    ).order_by(Post.time_stamp.desc()).all()
+    query_titles = (
+        Post.query.filter(Post.title.ilike(f"%{query}%"))
+        .order_by(Post.time_stamp.desc())
+        .all()
+    )
+    query_titles_no_space = (
+        Post.query.filter(Post.title.ilike(f"%{query_no_white_space}%"))
+        .order_by(Post.time_stamp.desc())
+        .all()
+    )
 
-    query_authors = Post.query.filter(
-        Post.author.ilike(f"%{query}%")
-    ).order_by(Post.time_stamp.desc()).all()
-    query_authors_no_space = Post.query.filter(
-        Post.author.ilike(f"%{query_no_white_space}%")
-    ).order_by(Post.time_stamp.desc()).all()
+    query_authors = (
+        Post.query.filter(Post.author.ilike(f"%{query}%"))
+        .order_by(Post.time_stamp.desc())
+        .all()
+    )
+    query_authors_no_space = (
+        Post.query.filter(Post.author.ilike(f"%{query_no_white_space}%"))
+        .order_by(Post.time_stamp.desc())
+        .all()
+    )
 
     all_posts_set = set()
     posts_ordered = []
 
     for post in (
-        query_tags + query_tags_no_space +
-        query_titles + query_titles_no_space +
-        query_authors + query_authors_no_space
+        query_tags
+        + query_tags_no_space
+        + query_titles
+        + query_titles_no_space
+        + query_authors
+        + query_authors_no_space
     ):
         if post.id not in all_posts_set:
             all_posts_set.add(post.id)
@@ -63,14 +78,23 @@ def search(query):
     total_posts = len(posts_ordered)
     total_pages = max(ceil(total_posts / per_page), 1)
     offset = (page - 1) * per_page
-    paginated_posts = posts_ordered[offset:offset + per_page]
+    paginated_posts = posts_ordered[offset : offset + per_page]
 
     posts = [
         [
             (
-                p.id, p.title, p.tags, p.content, p.banner, p.author,
-                p.views, p.time_stamp, p.last_edit_time_stamp,
-                p.category, p.url_id, p.abstract,
+                p.id,
+                p.title,
+                p.tags,
+                p.content,
+                p.banner,
+                p.author,
+                p.views,
+                p.time_stamp,
+                p.last_edit_time_stamp,
+                p.category,
+                p.url_id,
+                p.abstract,
             ),
         ]
         for p in paginated_posts
@@ -80,9 +104,15 @@ def search(query):
     if all_users:
         users_tuples = [
             (
-                u.user_id, u.username, u.email, u.password,
-                u.profile_picture, u.role, u.points,
-                u.time_stamp, u.is_verified,
+                u.user_id,
+                u.username,
+                u.email,
+                u.password,
+                u.profile_picture,
+                u.role,
+                u.points,
+                u.time_stamp,
+                u.is_verified,
             )
             for u in all_users
         ]

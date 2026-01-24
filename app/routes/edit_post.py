@@ -38,7 +38,10 @@ def edit_post(url_id):
         if post:
             Log.success(f'POST: "{url_id}" FOUND')
 
-            if post.author == session["username"] or session.get("user_role") == "admin":
+            if (
+                post.author == session["username"]
+                or session.get("user_role") == "admin"
+            ):
                 form = CreatePostForm(request.form)
                 form.post_title.data = post.title
                 form.post_tags.data = post.tags

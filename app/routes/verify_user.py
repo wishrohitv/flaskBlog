@@ -40,9 +40,7 @@ def verify_user(code_sent):
     if "username" in session:
         username = session["username"]
 
-        user = User.query.filter(
-            func.lower(User.username) == username.lower()
-        ).first()
+        user = User.query.filter(func.lower(User.username) == username.lower()).first()
 
         if not user:
             return redirect("/")

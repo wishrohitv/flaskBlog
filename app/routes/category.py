@@ -18,10 +18,27 @@ category_blueprint = Blueprint("category", __name__)
 @category_blueprint.route("/category/<category>/by=<by>/sort=<sort>")
 def category(category, by="time_stamp", sort="desc"):
     categories = [
-        "games", "history", "science", "code", "technology",
-        "education", "sports", "foods", "health", "apps",
-        "movies", "series", "travel", "books", "music",
-        "nature", "art", "finance", "business", "web", "other",
+        "games",
+        "history",
+        "science",
+        "code",
+        "technology",
+        "education",
+        "sports",
+        "foods",
+        "health",
+        "apps",
+        "movies",
+        "series",
+        "travel",
+        "books",
+        "music",
+        "nature",
+        "art",
+        "finance",
+        "business",
+        "web",
+        "other",
     ]
 
     by_options = ["time_stamp", "title", "views", "category", "last_edit_time_stamp"]
@@ -48,9 +65,18 @@ def category(category, by="time_stamp", sort="desc"):
 
     posts = [
         (
-            p.id, p.title, p.tags, p.content, p.banner, p.author,
-            p.views, p.time_stamp, p.last_edit_time_stamp,
-            p.category, p.url_id, p.abstract,
+            p.id,
+            p.title,
+            p.tags,
+            p.content,
+            p.banner,
+            p.author,
+            p.views,
+            p.time_stamp,
+            p.last_edit_time_stamp,
+            p.category,
+            p.url_id,
+            p.abstract,
         )
         for p in posts_objects
     ]
@@ -66,7 +92,9 @@ def category(category, by="time_stamp", sort="desc"):
     with open(translation_file, "r", encoding="utf-8") as file:
         translations = load(file)
 
-    sort_name = translations["sort_menu"][display_by] + " - " + translations["sort_menu"][sort]
+    sort_name = (
+        translations["sort_menu"][display_by] + " - " + translations["sort_menu"][sort]
+    )
 
     Log.info(f"Sorting posts on category/{category} page by: {sort_name}")
 

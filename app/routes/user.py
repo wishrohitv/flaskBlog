@@ -15,16 +15,16 @@ user_blueprint = Blueprint("user", __name__)
 def user(username):
     username_lower = username.lower()
 
-    user = User.query.filter(
-        func.lower(User.username) == username_lower
-    ).first()
+    user = User.query.filter(func.lower(User.username) == username_lower).first()
 
     if user:
         Log.success(f'User: "{username}" found')
 
-        posts = Post.query.filter_by(author=user.username).order_by(
-            Post.time_stamp.desc()
-        ).all()
+        posts = (
+            Post.query.filter_by(author=user.username)
+            .order_by(Post.time_stamp.desc())
+            .all()
+        )
 
         views = sum(post.views or 0 for post in posts)
 
@@ -38,23 +38,37 @@ def user(username):
         Log.success(f'User: "{username}"s data loaded')
 
         user_tuple = (
-            user.user_id, user.username, user.email, user.password,
-            user.profile_picture, user.role, user.points,
-            user.time_stamp, user.is_verified,
+            user.user_id,
+            user.username,
+            user.email,
+            user.password,
+            user.profile_picture,
+            user.role,
+            user.points,
+            user.time_stamp,
+            user.is_verified,
         )
 
         posts_tuples = [
             (
-                p.id, p.title, p.tags, p.content, p.banner, p.author,
-                p.views, p.time_stamp, p.last_edit_time_stamp,
-                p.category, p.url_id, p.abstract,
+                p.id,
+                p.title,
+                p.tags,
+                p.content,
+                p.banner,
+                p.author,
+                p.views,
+                p.time_stamp,
+                p.last_edit_time_stamp,
+                p.category,
+                p.url_id,
+                p.abstract,
             )
             for p in posts
         ]
 
         comments_tuples = [
-            (c.id, c.post_id, c.comment, c.username, c.time_stamp)
-            for c in comments
+            (c.id, c.post_id, c.comment, c.username, c.time_stamp) for c in comments
         ]
 
         return render_template(
