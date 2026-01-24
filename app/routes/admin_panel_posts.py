@@ -6,7 +6,7 @@ from flask import (
     session,
 )
 
-from settings import Settings
+from models import Post
 from utils.log import Log
 from utils.paginate import paginate_query
 
@@ -18,13 +18,27 @@ admin_panel_posts_blueprint = Blueprint("admin_panel_posts", __name__)
 def admin_panel_posts():
     if "username" in session:
         Log.info(f"Admin: {session['username']} reached to posts admin panel")
-        Log.database(f"Connecting to '{Settings.DB_POSTS_ROOT}' database")
 
-        posts, page, total_pages = paginate_query(
-            Settings.DB_POSTS_ROOT,
-            "select count(*) from posts",
-            "select * from posts order by time_stamp desc",
-        )
+        query = Post.query.order_by(Post.time_stamp.desc())
+        posts_objects, page, total_pages = paginate_query(query)
+
+        posts = [
+            (
+                p.id,
+                p.title,
+                p.tags,
+                p.content,
+                p.banner,
+                p.author,
+                p.views,
+                p.time_stamp,
+                p.last_edit_time_stamp,
+                p.category,
+                p.url_id,
+                p.abstract,
+            )
+            for p in posts_objects
+        ]
 
         Log.info(
             f"Rendering dashboard.html: params: posts={len(posts)} and show_posts=True"

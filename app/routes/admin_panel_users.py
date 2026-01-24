@@ -1,5 +1,3 @@
-import sqlite3
-
 from flask import (
     Blueprint,
     redirect,
@@ -8,7 +6,7 @@ from flask import (
     session,
 )
 
-from settings import Settings
+from models import User
 from utils.change_user_role import change_user_role
 from utils.delete import delete_user
 from utils.log import Log
@@ -22,16 +20,11 @@ admin_panel_users_blueprint = Blueprint("admin_panel_users", __name__)
 def admin_panel_users():
     if "username" in session:
         Log.info(f"Admin: {session['username']} reached to users admin panel")
-        Log.database(f"Connecting to '{Settings.DB_USERS_ROOT}' database")
 
-        connection = sqlite3.connect(Settings.DB_USERS_ROOT)
-        connection.set_trace_callback(Log.database)
-        cursor = connection.cursor()
-        cursor.execute(
-            """select role from users where username = ? """,
-            [(session["username"])],
-        )
-        role = cursor.fetchone()[0]
+        user = User.query.filter_by(username=session["username"]).first()
+
+        if not user:
+            return redirect("/")
 
         if request.method == "POST":
             if "user_delete_button" in request.form:
@@ -48,14 +41,26 @@ def admin_panel_users():
 
                 change_user_role(request.form["username"])
 
-        if role == "admin":
-            users, page, total_pages = paginate_query(
-                Settings.DB_USERS_ROOT,
-                "select count(*) from users",
-                "select * from users",
-            )
+        if user.role == "admin":
+            query = User.query
+            users_objects, page, total_pages = paginate_query(query)
 
-            Log.info(f"Rendering admin_panel_users.html: params: users={users}")
+            users = [
+                (
+                    u.user_id,
+                    u.username,
+                    u.email,
+                    u.password,
+                    u.profile_picture,
+                    u.role,
+                    u.points,
+                    u.time_stamp,
+                    u.is_verified,
+                )
+                for u in users_objects
+            ]
+
+            Log.info(f"Rendering admin_panel_users.html: params: users={len(users)}")
 
             return render_template(
                 "admin_panel_users.html",

@@ -1,8 +1,6 @@
-import sqlite3
-
 from flask import Blueprint, redirect, render_template, request, session
 
-from settings import Settings
+from models import User
 from utils.delete import delete_user
 from utils.log import Log
 
@@ -12,24 +10,18 @@ account_settings_blueprint = Blueprint("account_settings", __name__)
 @account_settings_blueprint.route("/account-settings", methods=["GET", "POST"])
 def account_settings():
     if "username" in session:
-        Log.database(f"Connecting to '{Settings.DB_USERS_ROOT}' database")
+        user = User.query.filter_by(username=session["username"]).first()
 
-        connection = sqlite3.connect(Settings.DB_USERS_ROOT)
-        connection.set_trace_callback(Log.database)
-        cursor = connection.cursor()
-        cursor.execute(
-            """select username from users where username = ? """,
-            [(session["username"])],
-        )
-        user = cursor.fetchall()
+        if not user:
+            return redirect("/")
 
         if request.method == "POST":
-            delete_user(user[0][0])
+            delete_user(user.username)
             return redirect("/")
 
         return render_template(
             "account_settings.html",
-            user=user,
+            user=(user.username,),
         )
     else:
         Log.error(

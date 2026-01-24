@@ -1,5 +1,3 @@
-import sqlite3
-
 from flask import (
     Blueprint,
     redirect,
@@ -7,8 +5,10 @@ from flask import (
     request,
     session,
 )
+from sqlalchemy import func
 
-from settings import Settings
+from database import db
+from models import Comment, Post, User
 from utils.flash_message import flash_message
 from utils.forms.change_user_name_form import ChangeUserNameForm
 from utils.log import Log
@@ -35,56 +35,34 @@ def change_username():
         if request.method == "POST":
             new_username = request.form["new_username"]
             new_username = new_username.replace(" ", "")
-            Log.database(f"Connecting to '{Settings.DB_USERS_ROOT}' database")
 
-            connection = sqlite3.connect(Settings.DB_USERS_ROOT)
-            connection.set_trace_callback(Log.database)
-            cursor = connection.cursor()
-            cursor.execute(
-                """select * from users where lower(username) = ? """,
-                [(new_username.lower())],
-            )
-            user = cursor.fetchone()
+            # Check if new username already exists
+            existing_user = User.query.filter(
+                func.lower(User.username) == new_username.lower()
+            ).first()
 
-            if not user:
-                Log.database(f"Connecting to '{Settings.DB_USERS_ROOT}' database")
+            if not existing_user:
+                old_username = session["username"]
 
-                connection = sqlite3.connect(Settings.DB_USERS_ROOT)
-                connection.set_trace_callback(Log.database)
-                cursor = connection.cursor()
-                cursor.execute(
-                    """update users set username = ? where username = ? """,
-                    [(new_username), (session["username"])],
+                # Update username in users table
+                user = User.query.filter_by(username=old_username).first()
+                if user:
+                    user.username = new_username
+
+                # Update author in posts table
+                Post.query.filter_by(author=old_username).update(
+                    {"author": new_username}
                 )
 
-                connection.commit()
-
-                Log.database(f"Connecting to '{Settings.DB_POSTS_ROOT}' database")
-
-                connection = sqlite3.connect(Settings.DB_POSTS_ROOT)
-                connection.set_trace_callback(Log.database)
-                cursor = connection.cursor()
-                cursor.execute(
-                    """update posts set username = ? where username = ? """,
-                    [(new_username), (session["username"])],
+                # Update username in comments table
+                Comment.query.filter_by(username=old_username).update(
+                    {"username": new_username}
                 )
 
-                connection.commit()
-
-                Log.database(f"Connecting to '{Settings.DB_COMMENTS_ROOT}' database")
-
-                connection = sqlite3.connect(Settings.DB_COMMENTS_ROOT)
-                connection.set_trace_callback(Log.database)
-                cursor = connection.cursor()
-                cursor.execute(
-                    """update comments set username = ? where username = ? """,
-                    [(new_username), (session["username"])],
-                )
-
-                connection.commit()
+                db.session.commit()
 
                 Log.success(
-                    f"User: {session['username']} changed his username to {new_username}",
+                    f"User: {old_username} changed his username to {new_username}",
                 )
 
                 session["username"] = new_username

@@ -1,17 +1,13 @@
 """
 This module contains the route for category pages.
-
-DISCLAIMER: This code is the property of the repository owner and is not intended for
-use without explicit permission from the owner. The code is provided as-is and is
-subject to change without notice. Use of this code for commercial or non-commercial
-purposes without permission is strictly prohibited.
 """
 
 from json import load
 
 from flask import Blueprint, abort, redirect, render_template, session
+from sqlalchemy import func
 
-from settings import Settings
+from models import Post
 from utils.log import Log
 from utils.paginate import paginate_query
 
@@ -21,15 +17,6 @@ category_blueprint = Blueprint("category", __name__)
 @category_blueprint.route("/category/<category>")
 @category_blueprint.route("/category/<category>/by=<by>/sort=<sort>")
 def category(category, by="time_stamp", sort="desc"):
-    """
-    This function handles requests for the category route.
-
-    :param category: The category name that is requested
-    :param by: The field to sort the posts by
-    :param sort: The sorting order of the posts
-    :return: A rendered template with the posts and the category as context
-    """
-
     categories = [
         "games",
         "history",
@@ -66,24 +53,48 @@ def category(category, by="time_stamp", sort="desc"):
     if category.lower() not in categories:
         abort(404)
 
-    posts, page, total_pages = paginate_query(
-        Settings.DB_POSTS_ROOT,
-        "select count(*) from posts where lower(category) = ?",
-        f"select * from posts where lower(category) = ? order by {by} {sort}",
-        [category.lower()],
-    )
+    base_query = Post.query.filter(func.lower(Post.category) == category.lower())
 
+    sort_field = getattr(Post, by)
+    if sort == "desc":
+        query = base_query.order_by(sort_field.desc())
+    else:
+        query = base_query.order_by(sort_field.asc())
+
+    posts_objects, page, total_pages = paginate_query(query)
+
+    posts = [
+        (
+            p.id,
+            p.title,
+            p.tags,
+            p.content,
+            p.banner,
+            p.author,
+            p.views,
+            p.time_stamp,
+            p.last_edit_time_stamp,
+            p.category,
+            p.url_id,
+            p.abstract,
+        )
+        for p in posts_objects
+    ]
+
+    display_by = by
     if by == "time_stamp":
-        by = "create"
+        display_by = "create"
     elif by == "last_edit_time_stamp":
-        by = "edit"
+        display_by = "edit"
 
     language = session.get("language")
     translation_file = f"./translations/{language}.json"
     with open(translation_file, "r", encoding="utf-8") as file:
         translations = load(file)
 
-    sort_name = translations["sort_menu"][by] + " - " + translations["sort_menu"][sort]
+    sort_name = (
+        translations["sort_menu"][display_by] + " - " + translations["sort_menu"][sort]
+    )
 
     Log.info(f"Sorting posts on category/{category} page by: {sort_name}")
 

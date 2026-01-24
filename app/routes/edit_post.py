@@ -1,5 +1,3 @@
-import sqlite3
-
 from flask import (
     Blueprint,
     redirect,
@@ -8,7 +6,8 @@ from flask import (
     session,
 )
 
-from settings import Settings
+from database import db
+from models import Post
 from utils.flash_message import flash_message
 from utils.forms.create_post_form import CreatePostForm
 from utils.log import Log
@@ -34,35 +33,21 @@ def edit_post(url_id):
     """
 
     if "username" in session:
-        Log.database(f"Connecting to '{Settings.DB_POSTS_ROOT}' database")
+        post = Post.query.filter_by(url_id=url_id).first()
 
-        connection = sqlite3.connect(Settings.DB_POSTS_ROOT)
-        connection.set_trace_callback(Log.database)
-        cursor = connection.cursor()
-        cursor.execute("select url_id from posts where url_id = ?", (url_id,))
-        posts = str(cursor.fetchall())
-
-        if str(url_id) in posts:
-            Log.database(f"Connecting to '{Settings.DB_POSTS_ROOT}' database")
-
-            connection = sqlite3.connect(Settings.DB_POSTS_ROOT)
-            connection.set_trace_callback(Log.database)
-            cursor = connection.cursor()
-            cursor.execute(
-                """select * from posts where url_id = ? """,
-                [(url_id)],
-            )
-            post = cursor.fetchone()
-
+        if post:
             Log.success(f'POST: "{url_id}" FOUND')
 
-            if post[5] == session["username"] or session["user_role"] == "admin":
+            if (
+                post.author == session["username"]
+                or session.get("user_role") == "admin"
+            ):
                 form = CreatePostForm(request.form)
-                form.post_title.data = post[1]
-                form.post_tags.data = post[2]
-                form.post_abstract.data = post[11]
-                form.post_content.data = post[3]
-                form.post_category.data = post[9]
+                form.post_title.data = post.title
+                form.post_tags.data = post.tags
+                form.post_abstract.data = post.abstract
+                form.post_content.data = post.content
+                form.post_category.data = post.category
 
                 if request.method == "POST":
                     post_title = request.form["post_title"]
@@ -83,40 +68,19 @@ def edit_post(url_id):
                             f'User: "{session["username"]}" tried to edit a post with empty content',
                         )
                     else:
-                        connection = sqlite3.connect(Settings.DB_POSTS_ROOT)
-                        connection.set_trace_callback(Log.database)
-                        cursor = connection.cursor()
-                        cursor.execute(
-                            """update posts set title = ? where id = ? """,
-                            (post_title, post[0]),
-                        )
-                        cursor.execute(
-                            """update posts set tags = ? where id = ? """,
-                            (post_tags, post[0]),
-                        )
-                        cursor.execute(
-                            """update posts set content = ? where id = ? """,
-                            (post_content, post[0]),
-                        )
-                        cursor.execute(
-                            """update posts set abstract = ? where id = ? """,
-                            (post_abstract, post[0]),
-                        )
-                        cursor.execute(
-                            """update posts set category = ? where id = ? """,
-                            (post_category, post[0]),
-                        )
-                        if post_banner != b"":
-                            cursor.execute(
-                                """update posts set banner = ? where id = ? """,
-                                (post_banner, post[0]),
-                            )
-                        cursor.execute(
-                            """update posts set last_edit_time_stamp = ? where id = ? """,
-                            [(current_time_stamp()), (post[0])],
-                        )
+                        post.title = post_title
+                        post.tags = post_tags
+                        post.content = post_content
+                        post.abstract = post_abstract
+                        post.category = post_category
 
-                        connection.commit()
+                        if post_banner != b"":
+                            post.banner = post_banner
+
+                        post.last_edit_time_stamp = current_time_stamp()
+
+                        db.session.commit()
+
                         Log.success(f'Post: "{post_title}" edited')
                         flash_message(
                             page="edit_post",
@@ -124,14 +88,14 @@ def edit_post(url_id):
                             category="success",
                             language=session["language"],
                         )
-                        return redirect(f"/post/{post[10]}")
+                        return redirect(f"/post/{post.url_id}")
 
                 return render_template(
                     "/edit_post.html",
-                    id=post[0],
-                    title=post[1],
-                    tags=post[2],
-                    content=post[3],
+                    id=post.id,
+                    title=post.title,
+                    tags=post.tags,
+                    content=post.content,
                     form=form,
                 )
             else:

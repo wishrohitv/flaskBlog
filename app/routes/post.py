@@ -1,5 +1,3 @@
-import sqlite3
-
 from flask import (
     Blueprint,
     redirect,
@@ -8,7 +6,10 @@ from flask import (
     session,
     url_for,
 )
+from markupsafe import escape
 
+from database import db
+from models import Comment, Post
 from settings import Settings
 from utils.add_points import add_points
 from utils.calculate_read_time import calculate_read_time
@@ -27,73 +28,38 @@ post_blueprint = Blueprint("post", __name__)
 def post(url_id=None, slug=None):
     form = CommentForm(request.form)
 
-    Log.database(f"Connecting to '{Settings.DB_POSTS_ROOT}' database")
+    post = Post.query.filter_by(url_id=url_id).first()
 
-    connection = sqlite3.connect(Settings.DB_POSTS_ROOT)
-    connection.set_trace_callback(Log.database)
-    cursor = connection.cursor()
-
-    cursor.execute("select url_id, title from posts where url_id = ?", (url_id,))
-    posts = cursor.fetchone()
-
-    if str(url_id) in posts:
-        post_slug = get_slug_from_post_title(posts[1])
+    if post:
+        post_slug = get_slug_from_post_title(post.title)
 
         if slug != post_slug:
             return redirect(url_for("post.post", url_id=url_id, slug=post_slug))
 
         Log.success(f'post: "{url_id}" loaded')
 
-        Log.database(f"Connecting to '{Settings.DB_POSTS_ROOT}' database")
-
-        connection = sqlite3.connect(Settings.DB_POSTS_ROOT)
-        connection.set_trace_callback(Log.database)
-        cursor = connection.cursor()
-
-        cursor.execute(
-            """select * from posts where url_id = ? """,
-            [(url_id)],
-        )
-        post = cursor.fetchone()
-
-        cursor.execute(
-            """update posts set views = views+1 where id = ? """,
-            [(post[0])],
-        )
-        connection.commit()
+        post.views = (post.views or 0) + 1
+        db.session.commit()
 
         if request.method == "POST":
             if "post_delete_button" in request.form:
-                delete_post(post[0])
-
+                delete_post(post.id)
                 return redirect("/")
 
             if "comment_delete_button" in request.form:
                 delete_comment(request.form["comment_id"])
-
                 return redirect(url_for("post.post", url_id=url_id)), 301
 
-            from markupsafe import escape
+            comment_text = escape(request.form["comment"])
 
-            comment = escape(request.form["comment"])
-
-            Log.database(f"Connecting to '{Settings.DB_COMMENTS_ROOT}' database")
-
-            connection = sqlite3.connect(Settings.DB_COMMENTS_ROOT)
-            connection.set_trace_callback(Log.database)
-            cursor = connection.cursor()
-
-            cursor.execute(
-                "insert into comments(id,comment,username,time_stamp) \
-                values(?, ?, ?, ?)",
-                (
-                    post[0],
-                    comment,
-                    session["username"],
-                    current_time_stamp(),
-                ),
+            new_comment = Comment(
+                post_id=post.id,
+                comment=comment_text,
+                username=session["username"],
+                time_stamp=current_time_stamp(),
             )
-            connection.commit()
+            db.session.add(new_comment)
+            db.session.commit()
 
             Log.success(
                 f'User: "{session["username"]}" commented to post: "{url_id}"',
@@ -110,38 +76,35 @@ def post(url_id=None, slug=None):
 
             return redirect(url_for("post.post", url_id=url_id)), 301
 
-        Log.database(f"Connecting to '{Settings.DB_COMMENTS_ROOT}' database")
-
-        connection = sqlite3.connect(Settings.DB_COMMENTS_ROOT)
-        connection.set_trace_callback(Log.database)
-        cursor = connection.cursor()
-
-        cursor.execute(
-            """select * from comments where id = ? order by time_stamp desc""",
-            [(post[0])],
+        comments = (
+            Comment.query.filter_by(post_id=post.id)
+            .order_by(Comment.time_stamp.desc())
+            .all()
         )
-        comments = cursor.fetchall()
+
+        comments_tuples = [
+            (c.id, c.post_id, c.comment, c.username, c.time_stamp) for c in comments
+        ]
 
         return render_template(
             "post.html",
-            id=post[0],
-            title=post[1],
-            tags=post[2],
-            abstract=post[11],
-            content=post[3],
-            author=post[5],
-            views=post[6],
-            time_stamp=post[7],
-            last_edit_time_stamp=post[8],
-            url_id=post[10],
+            id=post.id,
+            title=post.title,
+            tags=post.tags,
+            abstract=post.abstract,
+            content=post.content,
+            author=post.author,
+            views=post.views,
+            time_stamp=post.time_stamp,
+            last_edit_time_stamp=post.last_edit_time_stamp,
+            url_id=post.url_id,
             form=form,
-            comments=comments,
+            comments=comments_tuples,
             app_name=Settings.APP_NAME,
             blog_post_url=request.root_url,
-            reading_time=calculate_read_time(post[3]),
+            reading_time=calculate_read_time(post.content),
         )
 
     else:
         Log.error(f"{request.remote_addr} tried to reach unknown post")
-
         return render_template("not_found.html")

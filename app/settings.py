@@ -119,10 +119,8 @@ class Settings:
     SESSION_PERMANENT = True
 
     # Database Configuration
-    DB_FOLDER_ROOT = "db/"
-    DB_USERS_ROOT = DB_FOLDER_ROOT + "users.db"
-    DB_POSTS_ROOT = DB_FOLDER_ROOT + "posts.db"
-    DB_COMMENTS_ROOT = DB_FOLDER_ROOT + "comments.db"
+    SQLALCHEMY_DATABASE_URI = "sqlite:///flaskblog.db"
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # SMTP Mail Configuration
     SMTP_SERVER = "smtp.gmail.com"

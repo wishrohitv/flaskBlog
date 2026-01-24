@@ -1,8 +1,6 @@
-import sqlite3
-
 from flask import Blueprint, redirect, render_template, request, session
 
-from settings import Settings
+from models import User
 from utils.log import Log
 
 admin_panel_blueprint = Blueprint("admin_panel", __name__)
@@ -11,18 +9,12 @@ admin_panel_blueprint = Blueprint("admin_panel", __name__)
 @admin_panel_blueprint.route("/admin")
 def admin_panel():
     if "username" in session:
-        Log.success(f"Connecting to '{Settings.DB_USERS_ROOT}' database")
+        user = User.query.filter_by(username=session["username"]).first()
 
-        connection = sqlite3.connect(Settings.DB_USERS_ROOT)
-        connection.set_trace_callback(Log.database)
-        cursor = connection.cursor()
-        cursor.execute(
-            """select role from users where username = ? """,
-            [(session["username"])],
-        )
-        role = cursor.fetchone()[0]
+        if not user:
+            return redirect("/")
 
-        if role == "admin":
+        if user.role == "admin":
             Log.info(f"Admin: {session['username']} reached to the admin panel")
 
             Log.info("Rendering admin_panel.html: params: None")

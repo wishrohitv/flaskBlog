@@ -1,5 +1,4 @@
 import smtplib
-import sqlite3
 import ssl
 from email.message import EmailMessage
 from random import randint
@@ -11,7 +10,10 @@ from flask import (
     request,
     session,
 )
+from sqlalchemy import func
 
+from database import db
+from models import User
 from settings import Settings
 from utils.flash_message import flash_message
 from utils.forms.verify_user_form import VerifyUserForm
@@ -37,22 +39,15 @@ def verify_user(code_sent):
 
     if "username" in session:
         username = session["username"]
-        Log.database(f"Connecting to '{Settings.DB_USERS_ROOT}' database")
-        Log.database(f"Connecting to '{Settings.DB_USERS_ROOT}' database")
 
-        connection = sqlite3.connect(Settings.DB_USERS_ROOT)
-        connection.set_trace_callback(Log.database)
-        cursor = connection.cursor()
+        user = User.query.filter(func.lower(User.username) == username.lower()).first()
 
-        cursor.execute(
-            """select is_verified from users where lower(username) = ? """,
-            [(username.lower())],
-        )
-        is_verified = cursor.fetchone()[0]
-
-        if is_verified == "True":
+        if not user:
             return redirect("/")
-        elif is_verified == "False":
+
+        if user.is_verified == "True":
+            return redirect("/")
+        elif user.is_verified == "False":
             global verification_code
 
             form = VerifyUserForm(request.form)
@@ -62,11 +57,9 @@ def verify_user(code_sent):
                     code = request.form["code"]
 
                     if code == verification_code:
-                        cursor.execute(
-                            """update users set is_verified = "True" where lower(username) = ? """,
-                            [(username.lower())],
-                        )
-                        connection.commit()
+                        user.is_verified = "True"
+                        db.session.commit()
+
                         Log.success(f'User: "{username}" has been verified')
                         flash_message(
                             page="verify_user",
@@ -90,19 +83,7 @@ def verify_user(code_sent):
                 )
             elif code_sent == "false":
                 if request.method == "POST":
-                    cursor.execute(
-                        """select * from users where lower(username) = ? """,
-                        [(username.lower())],
-                    )
-                    username_db = cursor.fetchone()
-
-                    cursor.execute(
-                        """select email from users where lower(username) = ? """,
-                        [(username.lower())],
-                    )
-                    email = cursor.fetchone()
-
-                    if username_db:
+                    if user:
                         context = ssl.create_default_context()
                         server = smtplib.SMTP(Settings.SMTP_SERVER, Settings.SMTP_PORT)
                         server.ehlo()
@@ -114,7 +95,7 @@ def verify_user(code_sent):
 
                         message = EmailMessage()
                         message.set_content(
-                            f"Hi {username}👋,\nHere is your account verification code🔢:\n{verification_code}"
+                            f"Hi {username},\nHere is your account verification code:\n{verification_code}"
                         )
                         message.add_alternative(
                             f"""\
@@ -150,12 +131,12 @@ def verify_user(code_sent):
                         )
                         message["Subject"] = f"Verify your {Settings.APP_NAME} account!"
                         message["From"] = Settings.SMTP_MAIL
-                        message["To"] = email[0]
+                        message["To"] = user.email
 
                         server.send_message(message)
                         server.quit()
                         Log.success(
-                            f'Verification code sent to "{email[0]}" for user: "{username}"'
+                            f'Verification code sent to "{user.email}" for user: "{username}"'
                         )
 
                         return redirect("/verify-user/codesent=true")

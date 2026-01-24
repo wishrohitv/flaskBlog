@@ -1,5 +1,3 @@
-import sqlite3
-
 from flask import (
     Blueprint,
     redirect,
@@ -8,7 +6,8 @@ from flask import (
     session,
 )
 
-from settings import Settings
+from database import db
+from models import User
 from utils.flash_message import flash_message
 from utils.forms.change_profile_picture_form import ChangeProfilePictureForm
 from utils.log import Log
@@ -37,28 +36,23 @@ def change_profile_picture():
         if request.method == "POST":
             new_profile_picture_seed = request.form["new_profile_picture_seed"]
             new_profile_picture = f"https://api.dicebear.com/7.x/identicon/svg?seed={new_profile_picture_seed}&radius=10"
-            Log.database(f"Connecting to '{Settings.DB_USERS_ROOT}' database")
 
-            connection = sqlite3.connect(Settings.DB_USERS_ROOT)
-            connection.set_trace_callback(Log.database)
-            cursor = connection.cursor()
-            cursor.execute(
-                """update users set profile_picture = ? where username = ? """,
-                [(new_profile_picture), (session["username"])],
-            )
+            user = User.query.filter_by(username=session["username"]).first()
 
-            connection.commit()
+            if user:
+                user.profile_picture = new_profile_picture
+                db.session.commit()
 
-            Log.success(
-                f"User: {session['username']} changed his profile picture",
-            )
+                Log.success(
+                    f"User: {session['username']} changed his profile picture",
+                )
 
-            flash_message(
-                page="change_profile_picture",
-                message="success",
-                category="success",
-                language=session["language"],
-            )
+                flash_message(
+                    page="change_profile_picture",
+                    message="success",
+                    category="success",
+                    language=session["language"],
+                )
 
             return redirect("/account-settings")
 
