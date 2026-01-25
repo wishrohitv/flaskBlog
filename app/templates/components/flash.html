@@ -1,23 +1,31 @@
 {% macro flash() %}
-
-<link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='css/flash.css') }}"
-/>
-
-<div id="flash-container" class="fixed text-center select-none z-50">
-    {% with messages = get_flashed_messages(with_categories=true) %} {% if
-    messages %} {% for category, message in messages %}
-    <div
-        role="alert"
-        class="alert shadow-md {% if category == 'success' %}alert-success{% else %}alert-error{% endif %} alert-soft"
-    >
-        {% if category == 'success' %}<i
-            class="ti ti-circle-check-filled text-xl"
-        ></i
-        >{% else %} <i class="ti ti-circle-x-filled text-xl"></i>{% endif %}
-        <span>{{ message }}</span>
-    </div>
-    {% endfor %} {% endif %} {% endwith %}
+<div class="toast toast-end toast-bottom z-50">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div
+                role="alert"
+                class="alert {% if category == 'success' %}alert-success{% else %}alert-error{% endif %} shadow-lg animate-[slideIn_0.3s_ease-out,fadeOut_0.5s_ease-in_3.5s_forwards]"
+            >
+                {% if category == 'success' %}
+                    <i class="ti ti-circle-check-filled text-xl"></i>
+                {% else %}
+                    <i class="ti ti-circle-x-filled text-xl"></i>
+                {% endif %}
+                <span>{{ message }}</span>
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 </div>
+<style>
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; visibility: hidden; }
+}
+</style>
 {% endmacro %}

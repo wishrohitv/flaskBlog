@@ -1,35 +1,28 @@
 {% extends 'layout.html'%} {%block head%}
 <title>{{translations.login.title}}</title>
 {% endblock head %} {%block body%}
-<div class="hero min-h-[calc(100vh-6rem)] max-w-128 mx-auto">
-    <div class="card bg-base-100 w-10/12 max-w-sm shrink-0 shadow-2xl">
+<div class="hero min-h-[calc(100vh-8rem)]">
+    <div class="card bg-base-200 w-full max-w-sm shadow-xl">
         {% if recaptcha %}
         <script src="https://www.google.com/recaptcha/api.js"></script>
         <script src="{{ url_for('static', filename='js/recaptcha.js') }}"></script>
         <form method="post" id="recaptcha-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <div class="card-body">
-                <h1 class="text-3xl font-bold self-center">
+                <h1 class="card-title text-2xl font-bold justify-center">
                     {{translations.login.title}}
                 </h1>
                 <fieldset class="fieldset">
                     <label class="label">{{translations.login.username}}</label>
-                    {{form.username(autocomplete="off", class="input
-                    input-bordered w-full")}}
+                    {{form.username(autocomplete="off", class="input input-bordered w-full")}}
                     <label class="label">{{translations.login.password}}</label>
-                    {{form.password(autocomplete="off", class="input
-                    input-bordered w-full")}}
-                    <div>
-                        <a
-                            class="link link-hover"
-                            href="/password_reset/codesent=false"
-                            >{{translations.login.forgot}}</a
-                        >
+                    {{form.password(autocomplete="off", class="input input-bordered w-full")}}
+                    <div class="mt-1">
+                        <a class="link link-hover link-primary text-sm" href="/password_reset/codesent=false">
+                            {{translations.login.forgot}}
+                        </a>
                     </div>
-                    <button
-                        class="g-recaptcha btn btn-neutral mt-4"
-                        type="submit"
-                    >
+                    <button class="g-recaptcha btn btn-primary mt-4" type="submit">
                         {{translations.login.title}}
                     </button>
                 </fieldset>
@@ -39,24 +32,20 @@
         <form method="post">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <div class="card-body">
-                <h1 class="text-3xl font-bold self-center">
+                <h1 class="card-title text-2xl font-bold justify-center">
                     {{translations.login.title}}
                 </h1>
                 <fieldset class="fieldset">
                     <label class="label">{{translations.login.username}}</label>
-                    {{form.username(autocomplete="off", class="input
-                    input-bordered w-full")}}
+                    {{form.username(autocomplete="off", class="input input-bordered w-full")}}
                     <label class="label">{{translations.login.password}}</label>
-                    {{form.password(autocomplete="off", class="input
-                    input-bordered w-full")}}
-                    <div>
-                        <a
-                            class="link link-hover"
-                            href="/password_reset/codesent=false"
-                            >{{translations.login.forgot}}</a
-                        >
+                    {{form.password(autocomplete="off", class="input input-bordered w-full")}}
+                    <div class="mt-1">
+                        <a class="link link-hover link-primary text-sm" href="/password_reset/codesent=false">
+                            {{translations.login.forgot}}
+                        </a>
                     </div>
-                    <button class="btn btn-neutral mt-4" type="submit">
+                    <button class="btn btn-primary mt-4" type="submit">
                         {{translations.login.title}}
                     </button>
                 </fieldset>

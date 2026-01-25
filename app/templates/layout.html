@@ -14,32 +14,29 @@
             href="https://raw.githubusercontent.com/DogukanUrker/flaskBlog/main/images/Icon180.ico"
         />
 
-        <link
-            rel="stylesheet"
-            href="{{ url_for('static', filename='css/general.css') }}"
-        />
-
-        <link
-            href="https://cdn.jsdelivr.net/npm/daisyui@5"
-            rel="stylesheet"
-            type="text/css"
-        />
-
-        <link
-            href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css"
-            rel="stylesheet"
-            type="text/css"
-        />
+        <!-- Tailwind CSS v4 -->
         <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
+        <!-- DaisyUI v5 -->
         <link
+            href="https://cdn.jsdelivr.net/npm/daisyui@5.0.38/daisyui.css"
             rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.46.0/tabler-icons.min.css"
+            type="text/css"
         />
         <link
+            href="https://cdn.jsdelivr.net/npm/daisyui@5.0.38/themes.css"
             rel="stylesheet"
-            href="{{ url_for('static', filename='css/markdown.css') }}"
+            type="text/css"
         />
+
+        <!-- Tabler Icons -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"
+        />
+
+        <!-- Custom styles -->
+        <style>.grecaptcha-badge { visibility: hidden; }</style>
 
         <meta property="og:type" content="website" />
         <meta property="og:title" content="flaskBlog" />
@@ -68,20 +65,12 @@
     </head>
 
     <body id="body">
-        {% include 'components/change_theme.html'%} {% include
-        'components/navbar.html'%} {% from "components/flash.html" import flash
-        %} {{ flash() }} {% block body %} {% endblock body %}
-
-        <script
-            src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-            integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-            crossorigin="anonymous"
-        ></script>
+        {% include 'components/change_theme.html'%}
+        {% include 'components/navbar.html'%}
+        {% from "components/flash.html" import flash %}
+        {{ flash() }}
+        {% block body %} {% endblock body %}
 
         <script src="{{ url_for('static', filename='js/time_stamp.js') }}"></script>
-        <link
-            rel="stylesheet"
-            href="{{ url_for('static', filename='css/recaptcha.css') }}"
-        />
     </body>
 </html>

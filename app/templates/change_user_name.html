@@ -1,14 +1,24 @@
 {% extends 'layout.html' %} {% block head %}
 <title>{{translations.change_user_name.title}}</title>
 {% endblock head %} {% block body %}
-<div class="text-center mt-32">
-    <form method="post" class="mx-auto w-fit mt-8">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        {{ form.new_username(class_="input input-bordered w-full my-2",
-        placeholder=translations.change_user_name.placeholder) }}
-        <button type="submit" class="btn btn-neutral mt-4">
-            {{translations.change_user_name.change}}
-        </button>
-    </form>
+
+<div class="hero min-h-[calc(100vh-8rem)]">
+    <div class="card bg-base-200 w-full max-w-sm shadow-xl">
+        <form method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <div class="card-body">
+                <h1 class="card-title text-2xl font-bold justify-center">
+                    {{translations.change_user_name.title}}
+                </h1>
+                <fieldset class="fieldset">
+                    <label class="label">{{translations.change_user_name.placeholder}}</label>
+                    {{ form.new_username(class_="input input-bordered w-full", placeholder=translations.change_user_name.placeholder) }}
+                    <button type="submit" class="btn btn-primary mt-4">
+                        {{translations.change_user_name.change}}
+                    </button>
+                </fieldset>
+            </div>
+        </form>
+    </div>
 </div>
 {% endblock body %}

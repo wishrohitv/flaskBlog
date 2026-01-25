@@ -1,7 +1,22 @@
-{% extends 'layout.html' %} {% block head %} {% endblock head %} {% block body
-%}
-<div class="w-fit mx-auto text-center mt-16 text-lg">
-    <h1>{{translations.csrf_error.description}}</h1>
-    <p>{{translations.csrf_error.reason}}: {{ reason }}</p>
+{% extends 'layout.html' %} {% block head %}
+<title>CSRF Error</title>
+{% endblock head %} {% block body %}
+
+<div class="hero min-h-[calc(100vh-8rem)]">
+    <div class="hero-content text-center">
+        <div class="max-w-md">
+            <div class="alert alert-error mb-6">
+                <i class="ti ti-shield-x text-2xl"></i>
+                <div>
+                    <h3 class="font-bold">{{translations.csrf_error.description}}</h3>
+                    <p class="text-sm">{{translations.csrf_error.reason}}: {{ reason }}</p>
+                </div>
+            </div>
+            <a href="/" class="btn btn-primary">
+                <i class="ti ti-home"></i>
+                Go Home
+            </a>
+        </div>
+    </div>
 </div>
 {% endblock body %}
