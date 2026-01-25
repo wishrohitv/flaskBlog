@@ -2,10 +2,10 @@
   "about": {
     "title": "À propos",
     "version": "Version",
-    "description": "Application de blog simple réalisée avec Flask, SQLite3, WTForms, Passlib, reCAPTCHA, Requests, TailwindCSS, Tabler Icons",
+    "description": "Application de blog simple réalisée avec Flask, SQLAlchemy, WTForms, Passlib, Tailwind CSS, DaisyUI, Tabler Icons",
     "more_info": "Cliquez pour plus d'informations sur",
     "source_repo": "code source",
-    "credits": "Fait avec <i class='ti ti-heart-filled text-rose-500'></i> par <a href='https://dogukanurker.com/' target='_blank' class='text-rose-500 font-medium'>Doğukan Ürker</a>"
+    "credits": "Fait avec <i class='ti ti-heart text-primary'></i> par <a href='https://dogukanurker.com/' target='_blank' class='link link-primary font-medium'>Doğukan Ürker</a>"
   },
   "account_settings": {
     "title": "Paramètres du compte",

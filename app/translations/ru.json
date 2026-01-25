@@ -2,10 +2,10 @@
   "about": {
     "title": "О приложении",
     "version": "Версия",
-    "description": "Простое блог-приложение, созданное с использованием Flask, SQLite3, WTForms, Passlib, reCAPTCHA, Requests, TailwindCSS, Tabler Icons",
+    "description": "Простое блог-приложение, созданное с использованием Flask, SQLAlchemy, WTForms, Passlib, Tailwind CSS, DaisyUI, Tabler Icons",
     "more_info": "Нажмите для получения дополнительной информации о",
     "source_repo": "исходном коде",
-    "credits": "Создано с <i class='ti ti-heart-filled text-rose-500'></i> <a href='https://dogukanurker.com/' target='_blank' class='text-rose-500 font-medium'>Doğukan Ürker</a>"
+    "credits": "Создано с <i class='ti ti-heart text-primary'></i> <a href='https://dogukanurker.com/' target='_blank' class='link link-primary font-medium'>Doğukan Ürker</a>"
   },
   "account_settings": {
     "title": "Настройки аккаунта",

@@ -1,186 +1,151 @@
-{% extends 'layout.html' %} {% block head %} {% if request.path ==
-"/admin/posts" %}
+{% extends 'layout.html' %} {% block head %}
+{% if request.path == "/admin/posts" %}
 <title>{{translations.dashboard.title_admin}}</title>
 {% else %}
 <title>{{translations.dashboard.title}}</title>
-{% endif %} {% endblock head %} {% block body %} {% if show_posts %}
-<h1 class="my-4 text-4xl font-medium select-none text-center">
-    {{translations.dashboard.posts}}
-</h1>
+{% endif %}
+{% endblock head %} {% block body %}
 
-{% for post in posts %}
-<div
-    class="w-11/12 md:w-10/12 lg:w-8/12 xl:w-5/12 h-fit mx-auto py-4 px-2 my-8 border-2 rounded-md shadow-md border-gray-500/25"
->
-    <img
-        src="{{ url_for('return_post_banner.return_post_banner', post_id= post[0]) }}"
-        class="w-96 rounded mx-auto"
-    />
+<div class="container mx-auto px-4 max-w-4xl">
+    {% if show_posts %}
+    <h1 class="text-3xl font-bold text-center mt-8 mb-6">
+        {{translations.dashboard.posts}}
+    </h1>
 
-    <a
-        href="/post/{{ post[10] }}"
-        class="text-rose-500 h-64 pb-8 text-2xl hover:text-rose-500/75 duration-150 select-none break-words"
-        >{{ post[1] }}</a
-    >
+    <div class="space-y-6">
+        {% for post in posts %}
+        <div class="card bg-base-200 shadow-lg">
+            <figure class="px-4 pt-4">
+                <img
+                    src="{{ url_for('return_post_banner.return_post_banner', post_id=post[0]) }}"
+                    alt="{{ post[1] }}"
+                    class="rounded-xl max-w-sm w-full"
+                />
+            </figure>
+            <div class="card-body">
+                <a href="/post/{{ post[10] }}" class="card-title text-primary link link-hover">
+                    {{ post[1] }}
+                </a>
 
-    <div
-        tag="content"
-        class="h-60 overflow-y-hidden mt-6 mb-3 break-words markdown-content compact"
-    >
-        {{ render_markdown(post[3]) }}
+                <div class="prose prose-sm max-w-none max-h-40 overflow-hidden">
+                    {{ render_markdown(post[3]) }}
+                </div>
+
+                <div class="divider my-2"></div>
+
+                <div class="flex flex-wrap justify-between gap-2 text-xs text-base-content/60">
+                    <span class="flex items-center gap-1">
+                        <i class="ti ti-tags"></i> {{ post[2] }}
+                    </span>
+                    <span class="flex items-center gap-1">
+                        <i class="ti ti-eye"></i> {{ post[6] }}
+                    </span>
+                    <span class="flex items-center gap-1">
+                        <i class="ti ti-category"></i> {{ post[9] }}
+                    </span>
+                </div>
+                <div class="flex flex-wrap justify-between gap-2 text-xs text-base-content/60 mt-1">
+                    <span class="flex items-center gap-1">
+                        <i class="ti ti-calendar"></i>
+                        <span class="date">{{ post[7] }}</span> <span class="time">{{ post[7] }}</span>
+                    </span>
+                    <span class="flex items-center gap-1">
+                        <i class="ti ti-calendar-dot"></i>
+                        <span class="date">{{ post[8] }}</span> <span class="time">{{ post[8] }}</span>
+                    </span>
+                </div>
+
+                {% if request.path == "/admin/posts" %}
+                <div class="text-sm mt-2">
+                    <span class="flex items-center gap-1">
+                        <i class="ti ti-user"></i>
+                        {{translations.dashboard.author}}:
+                        <a href="/user/{{ post[5].lower() }}" class="link link-primary">{{ post[5] }}</a>
+                    </span>
+                </div>
+                {% endif %}
+
+                <div class="card-actions justify-end mt-4">
+                    <a href="/edit-post/{{ post[10] }}" class="btn btn-ghost btn-sm text-base-content hover:text-primary">
+                        <i class="ti ti-edit text-lg"></i>
+                    </a>
+                    <form method="post">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                        <input type="hidden" name="post_id" value="{{ post[0] }}" />
+                        <button type="submit" name="post_delete_button" class="btn btn-ghost btn-sm text-error">
+                            <i class="ti ti-trash-x text-lg"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
 
-    <section class="flex items-center justify-between my-2">
-        <a
-            href="/edit_post/{{ post[10] }}"
-            class="hover:text-rose-500 duration-150 font-medium"
-        >
-            <i class="ti ti-edit mr-1 text-2xl"></i>
-        </a>
-        <form method="post">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-            <input type="hidden" name="post_id" value="{{ post[0] }}" />
-            <button
-                type="submit"
-                name="post_delete_button"
-                class="hover:text-rose-500 duration-150 font-medium"
-            >
-                <i class="ti ti-trash-x mr-1 text-2xl"></i>
-            </button>
-        </form>
-    </section>
+    {% from "components/pagination.html" import pagination %}
+    {{ pagination(page, total_pages, request.path) }}
 
-    <div class="flex items-center justify-between my-2">
-        <div class="flex items-center">
-            <i class="ti ti-tags mr-1 text-xl"></i>
-            <p class="hidden md:block mr-1">{{translations.dashboard.tags}}:</p>
-            <p class="font-medium">{{ post[2] }}</p>
-        </div>
-        <div class="flex items-center">
-            <i class="ti ti-eye mr-1 text-xl"></i>
-            <p class="hidden md:block mr-1">
-                {{translations.dashboard.views}}:
-            </p>
-            <p class="font-medium">{{ post[6] }}</p>
-        </div>
-    </div>
-
-    <div class="flex items-center justify-between my-2">
-        <div class="flex items-center">
-            <i class="ti ti-clock mr-1 text-xl"></i>
-            <p class="hidden md:block mr-1">
-                {{translations.dashboard.creation_time}}:
-            </p>
-            <p class="time font-medium">{{ post[7] }}</p>
-        </div>
-        <div class="flex items-center">
-            <i class="ti ti-clock-edit mr-1 text-xl"></i>
-            <p class="hidden md:block mr-1">
-                {{translations.dashboard.edit_time}}:
-            </p>
-            <p class="time font-medium">{{ post[8] }}</p>
-        </div>
-    </div>
-
-    <div class="flex items-center justify-between my-2">
-        <div class="flex items-center">
-            <i class="ti ti-calendar mr-1 text-xl"></i>
-            <p class="hidden md:block mr-1">
-                {{translations.dashboard.creation_date}}:
-            </p>
-            <p class="date font-medium">{{ post[7] }}</p>
-        </div>
-        <div class="flex items-center">
-            <i class="ti ti-calendar-dot mr-1 text-xl"></i>
-            <p class="hidden md:block mr-1">
-                {{translations.dashboard.edit_date}}:
-            </p>
-            <p class="date font-medium">{{ post[8] }}</p>
-        </div>
-    </div>
-
-    <div class="flex items-center justify-between my-2">
+    {% elif not show_posts %}
         {% if request.path == "/admin/posts" %}
-        <div class="flex items-center">
-            <i class="ti ti-user mr-1 text-xl"></i>
-            <p class="hidden md:block mr-1">
-                {{translations.dashboard.author}}:
-            </p>
-            <a
-                href="/user/{{ post[5].lower() }}"
-                class="hover:text-rose-500 duration-150 font-medium"
-                >{{ post[5] }}</a
-            >
+        <div class="alert alert-info mt-8 max-w-md mx-auto">
+            <i class="ti ti-info-circle text-xl"></i>
+            <span>{{translations.dashboard.no_posts}}</span>
+        </div>
+        {% else %}
+        <div class="hero min-h-[50vh]">
+            <div class="hero-content text-center">
+                <div>
+                    <p class="text-lg">{{translations.dashboard.no_post}}</p>
+                    <a href="/create_post" class="btn btn-primary mt-4">
+                        {{translations.dashboard.create}}
+                    </a>
+                </div>
+            </div>
         </div>
         {% endif %}
-        <div class="flex items-center">
-            <i class="ti ti-category mr-1 text-xl"></i>
-            <p class="hidden md:block mr-1">
-                {{translations.dashboard.category}}:
-            </p>
-            <p class="font-medium">{{ post[9] }}</p>
+    {% endif %}
+
+    {% if show_comments and not request.path == "/admin/posts" %}
+    <h2 class="text-3xl font-bold text-center mt-8 mb-6">
+        {{translations.dashboard.comments}}
+    </h2>
+
+    <div class="space-y-4 max-w-2xl mx-auto mb-8">
+        {% for comment in comments %}
+        <div class="card bg-base-200 shadow">
+            <div class="card-body p-4">
+                <p class="text-base-content/80">{{ comment[2] | e }}</p>
+                <div class="flex flex-wrap justify-between items-center text-sm text-base-content/60 mt-2">
+                    <div class="flex items-center gap-4">
+                        <span class="flex items-center gap-1">
+                            <i class="ti ti-calendar"></i>
+                            <span class="date">{{ comment[4] }}</span>
+                        </span>
+                        <span class="flex items-center gap-1">
+                            <i class="ti ti-clock"></i>
+                            <span class="time">{{ comment[4] }}</span>
+                        </span>
+                    </div>
+                    <a href="/post/{{ url_id(comment[1]) }}" class="btn btn-ghost btn-xs text-primary">
+                        {{translations.dashboard.go}}
+                    </a>
+                </div>
+            </div>
         </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="fixed bottom-4 left-4">
+        {% if request.path == "/admin/posts" %}
+        <a href="/admin" class="btn btn-circle btn-ghost text-base-content hover:text-primary">
+            <i class="ti ti-arrow-back text-xl"></i>
+        </a>
+        {% else %}
+        <a href='/user/{{ session["username"] }}' class="btn btn-circle btn-ghost text-base-content hover:text-primary">
+            <i class="ti ti-arrow-back text-xl"></i>
+        </a>
+        {% endif %}
     </div>
 </div>
-{% endfor %} {% from "components/pagination.html" import pagination %} {{
-pagination(page, total_pages, request.path) }} {% elif not show_posts %} {% if
-request.path == "/admin/posts" %}
-<h1>{{translations.dashboard.no_posts}}</h1>
-{% else %}
-<p class="text-center mt-32 select-none">
-    {{translations.dashboard.no_post}}
-    <a href="/create_post" class="hover:text-rose-500 duration-150 font-medium"
-        >{{translations.dashboard.create}}</a
-    >?
-</p>
-{% endif %} {% endif %} {% if show_comments and not request.path ==
-"/admin/posts" %}
-<h1 class="my-4 text-4xl font-medium select-none text-center">
-    {{translations.dashboard.comments}}
-</h1>
-
-{% for comment in comments %}
-<div
-    class="w-11/12 md:w-10/12 lg:w-3/4 xl:w-1/2 h-fit mx-auto py-4 px-2 my-8 border-2 rounded-md shadow-md border-gray-500/25"
->
-    <div tag="content">{{ comment[2] | e }}</div>
-
-    <section class="flex items-center justify-between my-2">
-        <div class="flex items-center">
-            <i class="ti ti-calendar mr-1 text-xl"></i>
-            <p class="hidden md:block mr-1">
-                {{translations.dashboard.creation_date}}:
-            </p>
-            <p class="date">{{ comment[4] }}</p>
-        </div>
-        <div class="flex items-center">
-            <i class="ti ti-clock mr-1 text-xl"></i>
-            <p class="hidden md:block mr-1">
-                {{translations.dashboard.creation_time}}:
-            </p>
-            <p class="time">{{ comment[4] }}</p>
-        </div>
-    </section>
-
-    <a
-        href="/post/{{ url_id(comment[1]) }}"
-        class="hover:text-rose-500 duration-150 font-medium"
-        >{{translations.dashboard.go}}</a
-    >
-</div>
-{% endfor %} {% endif %} {% if request.path == "/admin/posts" %}
-<a href="/admin" class="hidden md:block fixed bottom-0 left-1">
-    <i
-        class="ti ti-arrow-back mr-1 text-xl hover:text-rose-500 duration-150"
-    ></i>
-</a>
-{% else %}
-<a
-    href='/user/{{ session["username"] }}'
-    class="hidden md:block fixed bottom-0 left-1"
->
-    <i
-        class="ti ti-arrow-back mr-1 text-xl hover:text-rose-500 duration-150"
-    ></i>
-</a>
-{% endif %} {% endblock body %}
+{% endblock body %}

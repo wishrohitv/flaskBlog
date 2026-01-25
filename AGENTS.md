@@ -1,68 +1,72 @@
 # AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to AI Agents when working with code in this repository.
 
 ## Development Commands
 
-All commands should be run from the `app/` directory:
-
 ```bash
-cd app
+# Run the application (from app/ directory)
+cd app && uv run app.py
 
-# Run the application
-uv run app.py
-
-# Run a specific script
-uv run python scripts/migrate_data.py
+# The app runs at http://localhost:1283
+# Default admin credentials: admin / admin
 ```
-
-The application runs at `http://localhost:1283` by default.
-
-Default admin credentials: `admin` / `admin`
 
 ## Architecture Overview
 
-FlaskBlog is a monolithic Flask application using the Blueprint pattern for route organization.
+This is a Flask blog application using Flask-SQLAlchemy with SQLite. The main application code lives in the `app/` directory.
 
-### Core Files (app/)
+### Core Structure
 
-- **app.py** - Application entry point, registers blueprints, configures middleware (CSRF, CSP headers, error handlers, context processors)
-- **settings.py** - Configuration class with all app settings (ports, features, SMTP, reCAPTCHA, themes, languages)
-- **database.py** - SQLAlchemy initialization and default admin creation
-- **models.py** - Three SQLAlchemy models: `User`, `Post`, `Comment`
+- **app/app.py** - Application entry point, registers all blueprints and middleware
+- **app/settings.py** - Configuration class with all app settings (Settings class)
+- **app/models.py** - SQLAlchemy models: User, Post, Comment
+- **app/database.py** - Database initialization and default admin creation
 
-### Route Organization (app/routes/)
+### Routes Organization
 
-Each feature has its own blueprint file. Major routes:
+Routes are organized as Flask Blueprints in `app/routes/`. Each route file exports a blueprint that gets registered in `app.py`. Key patterns:
 
-- Authentication: `login.py`, `signup.py`, `logout.py`, `verify_user.py`, `password_reset.py`
-- Content: `post.py`, `create_post.py`, `edit_post.py`, `category.py`, `search.py`
-- Admin: `admin_panel.py`, `admin_panel_users.py`, `admin_panel_posts.py`, `admin_panel_comments.py`
-- User: `user.py`, `dashboard.py`, `account_settings.py`, `change_*.py`
+- Admin routes: `admin_panel.py`, `admin_panel_users.py`, `admin_panel_posts.py`, `admin_panel_comments.py`
+- Auth routes: `login.py`, `signup.py`, `logout.py`, `verify_user.py`, `password_reset.py`
+- User routes: `account_settings.py`, `change_password.py`, `change_username.py`, `change_profile_picture.py`
+- Content routes: `post.py`, `create_post.py`, `edit_post.py`, `category.py`, `search.py`
 
-### Utilities (app/utils/)
+### Utils Organization
 
-- **context_processor/** - Jinja template context functions (translations, user state, markdown)
-- **before_request/** - Request preprocessing (browser language detection)
-- **error_handlers/** - Custom 401, 404, CSRF error pages
-- **forms/** - WTForms form definitions
+Utility functions in `app/utils/` are grouped by purpose:
 
-### Database
+- **forms/** - WTForms form definitions (login_form.py, sign_up_form.py, etc.)
+- **context_processor/** - Jinja2 context processors for templates
+- **before_request/** - Request preprocessing middleware
+- **error_handlers/** - Custom error handlers (404, 401, CSRF)
 
-- Uses Flask-SQLAlchemy with SQLite (`instance/flaskblog.db`)
-- Passwords hashed with passlib (sha512_crypt)
-- Migration script available: `scripts/migrate_data.py` for upgrading from legacy raw SQLite
+### Frontend Stack
 
-### Frontend
+- **Tailwind CSS v4** (via CDN browser build)
+- **DaisyUI v5** for component styling (35+ themes available in Settings.THEMES)
+- **Tabler Icons** for iconography
+- Templates use Jinja2 with `app/templates/layout.html` as the base
+- Reusable components in `app/templates/components/`
 
-- Templates use Jinja2 with `layout.html` as base template
-- TailwindCSS via CDN, DaisyUI themes (35+ themes configurable in settings)
-- Milkdown editor for post creation
-- 12 supported languages with translations in `translations/`
+### Internationalization
 
-### Key Patterns
+Translations are JSON files in `app/translations/` (en, tr, es, de, zh, fr, uk, ru, pt, ja, pl, hi). Access translations in templates via `translations` context variable injected by `utils/context_processor/translations.py`.
 
-- Feature toggles in `Settings` class control login, registration, reCAPTCHA, default admin
-- Logging via Tamga logger (can be toggled with Werkzeug logger)
-- Content Security Policy headers set in `after_request`
-- Posts use URL slugs (`url_id` field) with hot score ranking algorithm
+### Database Models
+
+- **User** - user_id, username, email, password (hashed), role (user/admin), points, is_verified
+- **Post** - id, title, content, banner (binary), author, views, category, url_id, abstract, has `hot_score` hybrid property
+- **Comment** - id, post_id (FK), comment, username, time_stamp
+
+### Key Conventions
+
+- Passwords hashed with Passlib's sha512_crypt
+- CSRF protection enabled via Flask-WTF
+- Session-based authentication (check `session["userName"]`)
+- Timestamps stored as Unix integers via `utils/time.py`
+- Posts use `url_id` for URL-friendly slugs
+
+---
+
+ultrathink

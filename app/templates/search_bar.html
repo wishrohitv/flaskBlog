@@ -1,18 +1,21 @@
 {% extends 'layout.html' %} {% block head %}
 <title>{{translations.search_bar.title}}</title>
 {% endblock head %} {% block body %}
-<div class="w-fit mx-auto mt-32">
-    <div>
-        <input
-            type="text"
-            id="search-bar-input"
-            autocomplete="off"
-            placeholder="{{translations.search_bar.placeholder}}"
-            class="input input-bordered w-72"
-        />
-        <button onclick="searchBar()" class="btn btn-neutral">
-            <i class="ti ti-search ml-2 text-2xl"></i>
-        </button>
+
+<div class="hero min-h-[calc(100vh-8rem)]">
+    <div class="hero-content">
+        <div class="join">
+            <input
+                type="text"
+                id="search-bar-input"
+                autocomplete="off"
+                placeholder="{{translations.search_bar.placeholder}}"
+                class="input input-bordered join-item w-64"
+            />
+            <button onclick="searchBar()" class="btn btn-primary join-item">
+                <i class="ti ti-search text-xl"></i>
+            </button>
+        </div>
     </div>
 </div>
 

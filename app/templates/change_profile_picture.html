@@ -1,27 +1,36 @@
 {% extends 'layout.html' %} {% block head %}
 <title>{{translations.change_profile_picture.title}}</title>
 {% endblock head %} {% block body %}
-<div class="text-center mt-32">
-    <div class="mb-3">
-        <p>https://api.dicebear.com/7.x/identicon/svg?seed={SEED}</p>
-        <small>{{translations.change_profile_picture.default}}</small><br />
-        <a href="https://www.dicebear.com/styles/identicon/" target="_blank">
-            <small>{{translations.change_profile_picture.info}}</small>
-        </a>
-    </div>
-    <div>
-        <form method="post">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-            {{
-            form.new_profile_picture_seed(class_="input input-bordered w-full my-2", placeholder=translations.change_profile_picture.placeholder)
-            }}
-            <button
-                type="submit"
-                class="btn btn-neutral mt-4"
-            >
-                {{translations.change_profile_picture.set}}
-            </button>
-        </form>
+
+<div class="hero min-h-[calc(100vh-8rem)]">
+    <div class="card bg-base-200 w-full max-w-sm shadow-xl">
+        <div class="card-body">
+            <h1 class="card-title text-2xl font-bold justify-center">
+                {{translations.change_profile_picture.title}}
+            </h1>
+
+            <div class="alert alert-info text-sm">
+                <i class="ti ti-info-circle"></i>
+                <div>
+                    <p class="font-mono text-xs break-all">https://api.dicebear.com/7.x/identicon/svg?seed={SEED}</p>
+                    <p class="mt-1">{{translations.change_profile_picture.default}}</p>
+                    <a href="https://www.dicebear.com/styles/identicon/" target="_blank" class="link link-primary">
+                        {{translations.change_profile_picture.info}}
+                    </a>
+                </div>
+            </div>
+
+            <form method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <fieldset class="fieldset">
+                    <label class="label">Seed</label>
+                    {{ form.new_profile_picture_seed(class_="input input-bordered w-full", placeholder=translations.change_profile_picture.placeholder) }}
+                    <button type="submit" class="btn btn-primary mt-4">
+                        {{translations.change_profile_picture.set}}
+                    </button>
+                </fieldset>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock body %}

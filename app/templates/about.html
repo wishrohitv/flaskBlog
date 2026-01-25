@@ -1,40 +1,46 @@
 {% extends 'layout.html' %} {% block head %}
 <title>{{ translations.about.title }} {{ app_name }}</title>
 {% endblock head %} {% block body %}
-<div
-    class="w-10/12 md:w-4/6 lg:w-6/12 xl:w-5/12 mx-auto mt-20 md:mt-32 break-words text-center text-lg"
->
-    <a
-        class="text-rose-500 text-4xl font-bold select-none"
-        href="https://dogukanurker.com/flaskblog"
-        target="_blank"
-    >
-        {{ app_name }}
-    </a>
 
-    <div class="mt-1 text-xs">
-        {{ translations.about.version }}: {{ app_version }}
-    </div>
+<div class="hero min-h-[calc(100vh-8rem)]">
+    <div class="hero-content text-center">
+        <div class="max-w-lg">
+            <a
+                class="text-4xl font-bold text-primary hover:text-primary/80 transition-colors"
+                href="https://dogukanurker.com/flaskblog"
+                target="_blank"
+            >
+                {{ app_name }}
+            </a>
 
-    <div class="mt-4 mx-auto">{{ translations.about.description }}</div>
+            <p class="badge badge-ghost mt-2">
+                {{ translations.about.version }}: {{ app_version }}
+            </p>
 
-    <div class="mt-4 mx-auto">
-        <a href="https://github.com/DogukanUrker/flaskBlog" target="_blank">
-            {{ translations.about.more_info }}
-            <p class="text-rose-500 inline-block">{{ app_name }}</p>
-            <p class="inline-block"><i class="ti ti-brand-github"></i></p>
-        </a>
-    </div>
+            <p class="py-6 text-base-content/80">
+                {{ translations.about.description }}
+            </p>
 
-    <div class="mx-auto text-xs absolute bottom-2 left-0 right-0 select-none">
-        <a
-            href="https://github.com/DogukanUrker/flaskBlog"
-            target="_blank"
-            class="text-rose-500 font-medium block"
-        >
-            {{ translations.about.source_repo }}</a
-        >
-        {{ translations.about.credits | safe }}
+            <a
+                href="https://github.com/DogukanUrker/flaskBlog"
+                target="_blank"
+                class="btn btn-primary"
+            >
+                <i class="ti ti-brand-github text-xl"></i>
+                {{ translations.about.more_info }} {{ app_name }}
+            </a>
+
+            <footer class="mt-8 text-xs text-base-content/60">
+                <a
+                    href="https://github.com/DogukanUrker/flaskBlog"
+                    target="_blank"
+                    class="link link-primary block mb-1"
+                >
+                    {{ translations.about.source_repo }}
+                </a>
+                {{ translations.about.credits | safe }}
+            </footer>
+        </div>
     </div>
 </div>
 {% endblock body %}
