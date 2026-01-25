@@ -1,5 +1,5 @@
 {% macro post_card(post, author_profile_picture) %}
-<div class="card bg-base-200 w-80 shadow-md hover:shadow-xl hover:scale-[1.02] transition-all duration-200">
+<div class="card card-sm bg-base-200 shadow-sm">
     <figure>
         <img
             src="{{ url_for('return_post_banner.return_post_banner', post_id=post[0]) }}"
@@ -7,7 +7,7 @@
             class="h-48 w-full object-cover"
         />
     </figure>
-    <div class="card-body p-5">
+    <div class="card-body">
         <span class="badge badge-secondary badge-sm">{{ post[9] }}</span>
         <a
             href="{{ url_for('post.post', slug=get_slug_from_post_title(post[1]), url_id=post[10]) }}"

@@ -3,7 +3,7 @@ from flask import request
 from utils.log import Log
 
 
-def paginate_query(query, per_page=9):
+def paginate_query(query, per_page=12):
     """Return paginated data for a SQLAlchemy query.
 
     Args:

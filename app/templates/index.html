@@ -33,7 +33,7 @@
         {{ sort_menu(sort_name, source, translations) }}
     </div>
 
-    <div class="flex flex-wrap justify-center gap-6 mt-8 max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-8 max-w-7xl mx-auto">
         {% for post in posts %}
             {% from "components/post_card_macro.html" import post_card with context %}
             {{ post_card(post=post, author_profile_picture=get_profile_picture(post[5])) }}
@@ -43,11 +43,7 @@
     {% from "components/pagination.html" import pagination %}
     {{ pagination(page, total_pages, request.path) }}
 
-    <footer class="footer footer-center p-4 text-base-content/70 text-xs">
-        <div>
-            <a href="/about" class="link link-primary">{{ translations.about.title }}</a>
-            <p>{{ translations.about.credits | safe }}</p>
-        </div>
-    </footer>
+    {% from "components/footer.html" import footer %}
+    {{ footer(translations) }}
 </div>
 {% endblock body %}

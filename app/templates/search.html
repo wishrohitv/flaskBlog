@@ -40,7 +40,7 @@
         <h2 class="text-2xl font-bold text-primary text-center mb-6">
             {{translations.search.posts}}
         </h2>
-        <div class="flex flex-wrap justify-center gap-6 max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
             {% from "components/post_card_macro.html" import post_card with context %}
             {% for post in posts %}
                 {% for post_data in post %}
