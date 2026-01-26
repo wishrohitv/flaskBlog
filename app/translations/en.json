@@ -193,11 +193,6 @@
     "policy": "Privacy Policy",
     "by": "By signing up, you accept"
   },
-  "unauthorized": {
-    "title": "reCAPTCHA Error",
-    "request": "Please submit the form again.",
-    "info": "reCAPTCHA Verification has failed."
-  },
   "user": {
     "posts": "Posts",
     "comments": "Comments",

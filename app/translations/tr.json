@@ -193,11 +193,6 @@
     "policy": "Gizlilik Politikası",
     "by": "Kayıt olarak kabul ediyorsunuz:"
   },
-  "unauthorized": {
-    "title": "reCAPTCHA Hatası",
-    "request": "Lütfen formu tekrar gönderin.",
-    "info": "reCAPTCHA Doğrulaması başarısız oldu."
-  },
   "user": {
     "posts": "Gönderiler",
     "comments": "Yorumlar",

@@ -1,13 +1,11 @@
 from flask import (
     Blueprint,
-    abort,
     redirect,
     render_template,
     request,
     session,
 )
 from passlib.hash import sha512_crypt as encryption
-from requests import post as requests_post
 from sqlalchemy import func
 
 from models import User
@@ -63,24 +61,6 @@ def login(direct):
                     )
                 else:
                     if encryption.verify(password, user.password):
-                        if Settings.RECAPTCHA:
-                            secret_response = request.form["g-recaptcha-response"]
-                            verify_response = requests_post(
-                                url=f"{Settings.RECAPTCHA_VERIFY_URL}?secret={Settings.RECAPTCHA_SECRET_KEY}&response={secret_response}"
-                            ).json()
-                            if not (
-                                verify_response["success"] is True
-                                or verify_response.get("score", 0) > 0.5
-                            ):
-                                Log.error(
-                                    f"Login reCAPTCHA | verification: {verify_response.get('success')} | score: {verify_response.get('score')}",
-                                )
-                                abort(401)
-
-                            Log.success(
-                                f"Login reCAPTCHA | verification: {verify_response['success']} | score: {verify_response.get('score')}",
-                            )
-
                         session["username"] = user.username
                         session["user_role"] = user.role
                         add_points(1, session["username"])
@@ -110,8 +90,6 @@ def login(direct):
                 "login.html",
                 form=form,
                 hide_login=True,
-                site_key=Settings.RECAPTCHA_SITE_KEY,
-                recaptcha=Settings.RECAPTCHA,
             )
     else:
         return (

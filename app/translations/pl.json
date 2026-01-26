@@ -193,11 +193,6 @@
     "policy": "Polityka prywatności",
     "by": "Rejestrując się, akceptujesz"
   },
-  "unauthorized": {
-    "title": "Błąd reCAPTCHA",
-    "request": "Proszę wysłać formularz ponownie.",
-    "info": "Weryfikacja reCAPTCHA nie powiodła się."
-  },
   "user": {
     "posts": "Posty",
     "comments": "Komentarze",

@@ -187,23 +187,6 @@ Log.info(f"SMTP port: {Settings.SMTP_PORT}")
 Log.info(f"SMTP mail: {Settings.SMTP_MAIL}")
 
 
-if Settings.RECAPTCHA:
-    if Settings.RECAPTCHA_SITE_KEY == "" or Settings.RECAPTCHA_SECRET_KEY == "":
-        Log.error(
-            "reCAPTCHA keys is unvalid this may cause the application to crash",
-        )
-        Log.error(
-            "Please check your recaptcha keys or set recaptcha to false from true in 'settings.py'",
-        )
-    else:
-        Log.info("reCAPTCHA is on for login and signup pages")
-        Log.info(f"reCAPTCHA recaptcha site key: {Settings.RECAPTCHA_SITE_KEY}")
-        Log.info(f"reCAPTCHA verify url: {Settings.RECAPTCHA_VERIFY_URL}")
-
-else:
-    Log.info("reCAPTCHA is off")
-
-
 if Settings.DEFAULT_ADMIN:
     Log.info("Default admin is on")
     Log.info(f"Default admin username: {Settings.DEFAULT_ADMIN_USERNAME}")

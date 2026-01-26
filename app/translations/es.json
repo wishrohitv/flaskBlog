@@ -193,11 +193,6 @@
     "policy": "Política de Privacidad",
     "by": "Al registrarse, acepta"
   },
-  "unauthorized": {
-    "title": "Error de reCAPTCHA",
-    "request": "Por favor, envíe el formulario nuevamente.",
-    "info": "La verificación de reCAPTCHA ha fallado."
-  },
   "user": {
     "posts": "Publicaciones",
     "comments": "Comentarios",

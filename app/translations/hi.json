@@ -2,7 +2,7 @@
   "about": {
     "title": "बारे में",
     "version": "संस्करण",
-    "description": "सरल ब्लॉग ऐप, जो Flask, SQLite3, WTForms, Passlib, reCAPTCHA, Requests, TailwindCSS, और Tabler Icons के साथ बनाया गया है",
+    "description": "सरल ब्लॉग ऐप, जो Flask, SQLite3, WTForms, Passlib, TailwindCSS, और Tabler Icons के साथ बनाया गया है",
     "more_info": "अधिक जानकारी के लिए क्लिक करें",
     "source_repo": "सोर्स कोड",
     "credits": "<i class='ti ti-heart-filled text-rose-500'></i> के साथ बनाया गया <a href='https://dogukanurker.com/' target='_blank' class='text-rose-500 font-medium'>Doğukan Ürker</a> द्वारा"
@@ -192,11 +192,6 @@
     "confirm": "पासवर्ड की पुष्टि करें",
     "policy": "गोपनीयता नीति",
     "by": "साइन अप करके आप स्वीकार करते हैं"
-  },
-  "unauthorized": {
-    "title": "reCAPTCHA त्रुटि",
-    "request": "कृपया फ़ॉर्म को दोबारा सबमिट करें।",
-    "info": "reCAPTCHA सत्यापन असफल रहा।"
   },
   "user": {
     "posts": "पोस्ट",

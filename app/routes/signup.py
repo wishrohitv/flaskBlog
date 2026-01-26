@@ -4,14 +4,12 @@ from email.message import EmailMessage
 
 from flask import (
     Blueprint,
-    abort,
     redirect,
     render_template,
     request,
     session,
 )
 from passlib.hash import sha512_crypt as encryption
-from requests import post as requests_post
 from sqlalchemy import func
 
 from database import db
@@ -69,24 +67,6 @@ def signup():
                     if password_confirm == password:
                         if username.isascii():
                             hashed_password = encryption.hash(password)
-
-                            if Settings.RECAPTCHA:
-                                secret_response = request.form["g-recaptcha-response"]
-                                verify_response = requests_post(
-                                    url=f"{Settings.RECAPTCHA_VERIFY_URL}?secret={Settings.RECAPTCHA_SECRET_KEY}&response={secret_response}"
-                                ).json()
-                                if not (
-                                    verify_response["success"] is True
-                                    or verify_response.get("score", 0) > 0.5
-                                ):
-                                    Log.error(
-                                        f"Signup reCAPTCHA | verification: {verify_response.get('success')} | score: {verify_response.get('score')}",
-                                    )
-                                    abort(401)
-
-                                Log.success(
-                                    f"Signup reCAPTCHA | verification: {verify_response['success']} | score: {verify_response.get('score')}",
-                                )
 
                             # Create user account
                             new_user = User(
@@ -221,8 +201,6 @@ def signup():
                 "signup.html",
                 form=form,
                 hide_sign_up=True,
-                site_key=Settings.RECAPTCHA_SITE_KEY,
-                recaptcha=Settings.RECAPTCHA,
             )
     else:
         return redirect("/")
