@@ -3,41 +3,6 @@
 {% endblock head %} {% block body %}
 <div class="hero min-h-[calc(100vh-8rem)]">
     <div class="card bg-base-200 w-full max-w-sm shadow-xl">
-        {% if recaptcha %}
-        <script src="https://www.google.com/recaptcha/api.js"></script>
-        <script src="{{ url_for('static', filename='js/recaptcha.js') }}"></script>
-        <form method="post" id="recaptcha-form" action="{{ url_for('signup.signup') }}">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-            <div class="card-body">
-                <h1 class="card-title text-2xl font-bold justify-center">
-                    {{translations.signup.title}}
-                </h1>
-                <fieldset class="fieldset">
-                    <label class="label">{{translations.signup.username}}</label>
-                    {{form.username(class_="input input-bordered w-full", autocomplete="off", placeholder=translations.signup.username)}}
-                    <label class="label">{{translations.signup.email}}</label>
-                    {{form.email(class_="input input-bordered w-full", autocomplete="off", placeholder=translations.signup.email)}}
-                    <label class="label">{{translations.signup.password}}</label>
-                    {{form.password(class_="input input-bordered w-full", placeholder=translations.signup.password)}}
-                    <label class="label">{{translations.signup.confirm}}</label>
-                    {{form.password_confirm(class_="input input-bordered w-full", placeholder=translations.signup.confirm)}}
-                    <button
-                        type="submit"
-                        data-sitekey="{{ site_key }}"
-                        data-callback="onSubmit"
-                        data-action="submit"
-                        class="g-recaptcha btn btn-primary mt-4"
-                    >
-                        {{translations.signup.title}}
-                    </button>
-                    <p class="text-xs text-center mt-2 text-base-content/70">
-                        {{translations.signup.by}}
-                        <a href="/privacy-policy" class="link link-primary">{{translations.signup.policy}}</a>
-                    </p>
-                </fieldset>
-            </div>
-        </form>
-        {% else %}
         <form method="post">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <div class="card-body">
@@ -63,7 +28,6 @@
                 </fieldset>
             </div>
         </form>
-        {% endif %}
     </div>
 </div>
 {% endblock body %}

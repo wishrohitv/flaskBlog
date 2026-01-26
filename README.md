@@ -14,7 +14,6 @@ A modern blog application built with Flask, featuring a clean UI and powerful ad
 - **Categories** - Organize posts by topics
 - **Search** - Find posts quickly
 - **Responsive Design** - Works great on all devices
-- **Security** - Google reCAPTCHA v3, secure authentication
 - **Advanced Logging** - Powered by [Tamga](https://github.com/dogukanurker/tamga) logger
 
 ## 🚀 Quick Start

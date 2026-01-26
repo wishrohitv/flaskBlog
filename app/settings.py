@@ -44,10 +44,6 @@ class Settings:
         DEFAULT_ADMIN_PASSWORD (str): Default admin password.
         DEFAULT_ADMIN_POINT (int): Default starting point score for admin.
         DEFAULT_ADMIN_PROFILE_PICTURE (str): Default admin profile picture URL.
-        RECAPTCHA (bool): Toggle reCAPTCHA verification.
-        RECAPTCHA_SITE_KEY (str): reCAPTCHA site key.
-        RECAPTCHA_SECRET_KEY (str): reCAPTCHA secret key.
-        RECAPTCHA_VERIFY_URL (str): reCAPTCHA verify URL.
     """
 
     # Application Configuration
@@ -135,9 +131,3 @@ class Settings:
     DEFAULT_ADMIN_PASSWORD = "admin"
     DEFAULT_ADMIN_POINT = 0
     DEFAULT_ADMIN_PROFILE_PICTURE = f"https://api.dicebear.com/7.x/identicon/svg?seed={DEFAULT_ADMIN_USERNAME}&radius=10"
-
-    # reCAPTCHA Configuration
-    RECAPTCHA = False
-    RECAPTCHA_SITE_KEY = ""
-    RECAPTCHA_SECRET_KEY = ""
-    RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify"

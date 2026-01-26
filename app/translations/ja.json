@@ -2,7 +2,7 @@
   "about": {
     "title": "概要",
     "version": "バージョン",
-    "description": "Flask、SQLite3、WTForms、Passlib、reCAPTCHA、Requests、TailwindCSS、Tabler Iconsで作成されたシンプルなブログアプリ",
+    "description": "Flask、SQLite3、WTForms、Passlib、TailwindCSS、Tabler Iconsで作成されたシンプルなブログアプリ",
     "more_info": "についての詳細情報はこちらをクリック",
     "source_repo": "ソースコード",
     "credits": "<i class='ti ti-heart text-primary'></i> によって作成されました <a href='https://dogukanurker.com/' target='_blank' class='link link-primary font-medium'>Doğukan Ürker</a>"
@@ -192,11 +192,6 @@
     "confirm": "パスワードの確認",
     "policy": "プライバシーポリシー",
     "by": "サインアップすることで、あなたは"
-  },
-  "unauthorized": {
-    "title": "reCAPTCHAエラー",
-    "request": "フォームを再度提出してください。",
-    "info": "reCAPTCHA認証に失敗しました。"
   },
   "user": {
     "posts": "投稿",

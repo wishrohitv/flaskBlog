@@ -193,11 +193,6 @@
     "policy": "Datenschutzrichtlinie",
     "by": "Durch die Registrierung stimmen Sie zu"
   },
-  "unauthorized": {
-    "title": "reCAPTCHA Fehler",
-    "request": "Bitte senden Sie das Formular erneut.",
-    "info": "Die reCAPTCHA-Verifizierung ist fehlgeschlagen."
-  },
   "user": {
     "posts": "Beiträge",
     "comments": "Kommentare",

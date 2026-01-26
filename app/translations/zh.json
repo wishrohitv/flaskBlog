@@ -192,11 +192,6 @@
     "policy": "隐私政策",
     "by": "通过注册，您接受"
   },
-  "unauthorized": {
-    "title": "reCAPTCHA 错误",
-    "request": "请再次提交表单。",
-    "info": "reCAPTCHA 验证失败。"
-  },
   "user": {
     "posts": "帖子",
     "comments": "评论",
