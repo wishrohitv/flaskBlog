@@ -43,12 +43,13 @@ def flask_server(app_settings, app_dir):
     env = os.environ.copy()
     env["PYTHONUNBUFFERED"] = "1"
 
+    # Redirect output to devnull to prevent buffer filling and blocking
     process = subprocess.Popen(
         [sys.executable, "app.py"],
         cwd=str(app_dir),
         env=env,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
     )
 
     # Wait for server to be ready
@@ -68,10 +69,10 @@ def flask_server(app_settings, app_dir):
 
     if not server_ready:
         process.terminate()
-        stdout, stderr = process.communicate(timeout=5)
+        process.wait(timeout=5)
         raise RuntimeError(
-            f"Flask server failed to start within {max_wait} seconds.\n"
-            f"stdout: {stdout.decode()}\nstderr: {stderr.decode()}"
+            f"Flask server failed to start within {max_wait} seconds. "
+            f"Check that port {port} is available and the app starts correctly."
         )
 
     yield {"process": process, "base_url": base_url, "port": port}
