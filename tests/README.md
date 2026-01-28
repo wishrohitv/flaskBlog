@@ -156,14 +156,14 @@ def test_login(page, flask_server):
 
 ### Test Data
 
-Generate test users with `TestUserData`:
+Generate test users with `UserData`:
 
 ```python
-from tests.e2e.helpers.test_data import TestUserData
+from tests.e2e.helpers.test_data import UserData
 
-user = TestUserData.generate()           # Random user
-admin = TestUserData.admin()             # Admin user
-unverified = TestUserData.unverified()   # Unverified user
+user = UserData.generate()           # Random user
+admin = UserData.admin()             # Admin user
+unverified = UserData.unverified()   # Unverified user
 ```
 
 ### Database Helpers

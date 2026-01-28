@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 
 
 @dataclass
-class TestUserData:
+class UserData:
     """Test user data with default values."""
 
     username: str = field(default_factory=lambda: f"testuser_{uuid.uuid4().hex[:8]}")
@@ -17,12 +17,12 @@ class TestUserData:
     is_verified: str = "True"
 
     @classmethod
-    def generate(cls, **overrides) -> "TestUserData":
+    def generate(cls, **overrides) -> "UserData":
         """Generate test user data with optional overrides."""
         return cls(**overrides)
 
     @classmethod
-    def admin(cls) -> "TestUserData":
+    def admin(cls) -> "UserData":
         """Generate admin user data."""
         return cls(
             username=f"testadmin_{uuid.uuid4().hex[:8]}",
@@ -31,13 +31,13 @@ class TestUserData:
         )
 
     @classmethod
-    def unverified(cls) -> "TestUserData":
+    def unverified(cls) -> "UserData":
         """Generate unverified user data."""
         return cls(is_verified="False")
 
 
 @dataclass
-class TestPostData:
+class PostData:
     """Test post data with default values."""
 
     title: str = field(default_factory=lambda: f"Test Post {uuid.uuid4().hex[:8]}")
@@ -49,7 +49,7 @@ class TestPostData:
     author: str = "admin"
 
     @classmethod
-    def generate(cls, **overrides) -> "TestPostData":
+    def generate(cls, **overrides) -> "PostData":
         """Generate test post data with optional overrides."""
         return cls(**overrides)
 

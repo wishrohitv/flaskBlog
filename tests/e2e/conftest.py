@@ -180,9 +180,9 @@ def test_user(clean_db, db_path):
     The user is created fresh for each test.
     """
     from tests.e2e.helpers.database_helpers import create_test_user
-    from tests.e2e.helpers.test_data import TestUserData
+    from tests.e2e.helpers.test_data import UserData
 
-    user_data = TestUserData.generate()
+    user_data = UserData.generate()
     create_test_user(
         db_path=str(db_path),
         username=user_data.username,
@@ -201,9 +201,9 @@ def unverified_test_user(clean_db, db_path):
     The user is created fresh for each test with is_verified="False".
     """
     from tests.e2e.helpers.database_helpers import create_test_user
-    from tests.e2e.helpers.test_data import TestUserData
+    from tests.e2e.helpers.test_data import UserData
 
-    user_data = TestUserData.unverified()
+    user_data = UserData.unverified()
     create_test_user(
         db_path=str(db_path),
         username=user_data.username,
