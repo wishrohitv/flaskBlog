@@ -162,6 +162,9 @@ cython_debug/
 # App's default log files
 log/
 
+# Test database backups
+*.db.bak
+
 # PyCharm files
 /.idea
 

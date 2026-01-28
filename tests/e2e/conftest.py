@@ -117,29 +117,36 @@ def page(context):
     page.close()
 
 
-@pytest.fixture(scope="function")
-def clean_db(app_dir, db_path):
+@pytest.fixture(scope="session", autouse=True)
+def backup_and_restore_db(db_path):
     """
-    Reset database to known state before each test.
-    Creates a backup before tests and restores after if needed.
+    Session-scoped fixture that backs up the database before tests
+    and restores it after all tests complete.
     """
-    from tests.e2e.helpers.database_helpers import reset_database
-
     backup_path = db_path.with_suffix(".db.bak")
 
-    # Create backup if it doesn't exist
-    if db_path.exists() and not backup_path.exists():
+    # Create backup before any tests run
+    if db_path.exists():
         shutil.copy2(db_path, backup_path)
-
-    # Reset the database (removes test users, keeps admin)
-    reset_database(str(db_path))
 
     yield
 
-    # Optionally restore backup after test
-    # Commented out to allow cumulative state during session
-    # if backup_path.exists():
-    #     shutil.copy2(backup_path, db_path)
+    # Restore backup after all tests complete
+    if backup_path.exists():
+        shutil.copy2(backup_path, db_path)
+        backup_path.unlink()  # Remove the backup file
+
+
+@pytest.fixture(scope="function")
+def clean_db(db_path):
+    """
+    Reset database to known state before each test.
+    Removes test users but keeps the admin.
+    """
+    from tests.e2e.helpers.database_helpers import reset_database
+
+    reset_database(str(db_path))
+    yield
 
 
 @pytest.fixture(scope="function")
