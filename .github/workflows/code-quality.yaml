@@ -1,4 +1,4 @@
-name: Code Quality
+name: code quality
 
 on:
   push:
@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   ruff-check:
-    name: 🔍 Lint & Format Check
+    name: lint & format check
     runs-on: ubuntu-latest
     timeout-minutes: 10
     strategy:
@@ -28,15 +28,15 @@ jobs:
         python-version: ["3.13"]
 
     steps:
-      - name: 📥 Checkout repository
+      - name: checkout repository
         uses: actions/checkout@v4
 
-      - name: 🐍 Set up Python ${{ matrix.python-version }}
+      - name: set up python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: 💾 Cache pip dependencies
+      - name: cache pip dependencies
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
@@ -45,24 +45,24 @@ jobs:
             ${{ runner.os }}-pip-${{ matrix.python-version }}-
             ${{ runner.os }}-pip-
 
-      - name: 📦 Install Ruff
+      - name: install ruff
         run: |
           python -m pip install --upgrade pip
           pip install ruff
 
-      - name: ✨ Check code formatting
+      - name: check code formatting
         run: |
           ruff format --check --diff .
 
-      - name: 🔍 Lint code
+      - name: lint code
         run: |
           ruff check --output-format=github .
 
-      - name: 📊 Generate Ruff report
+      - name: generate ruff report
         if: failure()
         run: |
-          echo "## 🐍 Ruff Issues Found" >> $GITHUB_STEP_SUMMARY
-          echo "The following issues were found by Ruff:" >> $GITHUB_STEP_SUMMARY
+          echo "## ruff issues found" >> $GITHUB_STEP_SUMMARY
+          echo "the following issues were found by ruff:" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
           ruff check --output-format=text . >> $GITHUB_STEP_SUMMARY || true
           echo '```' >> $GITHUB_STEP_SUMMARY

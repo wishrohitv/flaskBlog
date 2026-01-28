@@ -1,10 +1,10 @@
-name: E2E Tests
+name: e2e tests
 
 on:
   workflow_dispatch:
     inputs:
       test_path:
-        description: "Specific test to run (e.g., e2e/auth/test_login.py::TestLoginSuccess)"
+        description: "specific test to run (e.g., e2e/auth/test_login.py::TestLoginSuccess)"
         required: false
         default: "e2e/"
   push:
@@ -30,27 +30,27 @@ jobs:
     timeout-minutes: 15
 
     steps:
-      - name: Checkout repository
+      - name: checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.13
+      - name: set up python 3.13
         uses: actions/setup-python@v5
         with:
           python-version: "3.13"
 
-      - name: Install uv
+      - name: install uv
         uses: astral-sh/setup-uv@v4
         with:
           enable-cache: true
           cache-dependency-glob: "app/pyproject.toml"
 
-      - name: Install dependencies
+      - name: install dependencies
         run: |
           cd app
           uv sync --extra test
           uv run playwright install chromium --with-deps
 
-      - name: Run E2E tests
+      - name: run e2e tests
         run: |
           cd app
           uv run pytest ../tests/${{ github.event.inputs.test_path || 'e2e/' }} -v --tb=short
