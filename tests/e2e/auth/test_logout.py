@@ -2,7 +2,10 @@
 E2E tests for the logout functionality.
 """
 
+import re
+
 import pytest
+from playwright.sync_api import expect
 
 from tests.e2e.pages.base_page import BasePage
 from tests.e2e.pages.login_page import LoginPage
@@ -252,7 +255,10 @@ class TestLogoutWithDifferentUsers:
         login_page.navigate("/login/redirect=&")
         login_page.login(test_user.username, test_user.password)
         page.wait_for_load_state("networkidle")
-        page.wait_for_url("**/", timeout=10000)
+        # Use regex to match home URL with or without trailing slash
+        expect(page).to_have_url(
+            re.compile(rf"^{re.escape(flask_server['base_url'])}/?$"), timeout=10000
+        )
 
         # Verify logged in as different user
         navbar.expect_logged_in()
