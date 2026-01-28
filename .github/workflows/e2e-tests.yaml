@@ -12,13 +12,13 @@ on:
     paths:
       - "app/**"
       - "tests/**"
-      - ".github/workflows/e2e-tests.yml"
+      - ".github/workflows/e2e-tests.yaml"
   pull_request:
     branches: [main]
     paths:
       - "app/**"
       - "tests/**"
-      - ".github/workflows/e2e-tests.yml"
+      - ".github/workflows/e2e-tests.yaml"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -31,15 +31,15 @@ jobs:
 
     steps:
       - name: checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: set up python 3.13
-        uses: actions/setup-python@v5
+      - name: set up python 3.14
+        uses: actions/setup-python@v6
         with:
-          python-version: "3.13"
+          python-version: "3.14"
 
       - name: install uv
-        uses: astral-sh/setup-uv@v4
+        uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
           cache-dependency-glob: "app/pyproject.toml"
