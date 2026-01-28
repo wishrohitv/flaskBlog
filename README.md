@@ -41,6 +41,15 @@ Visit `http://localhost:1283` in your browser.
 - Username: `admin`
 - Password: `admin`
 
+### Running Tests
+
+```bash
+cd app
+uv run pytest ../tests/e2e/ -v
+```
+
+See [tests/README.md](tests/README.md) for details.
+
 ## 🛠️ Tech Stack
 
 **Backend:** Flask, SQLite3, WTForms, Passlib \
