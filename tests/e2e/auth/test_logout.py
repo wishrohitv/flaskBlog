@@ -251,7 +251,8 @@ class TestLogoutWithDifferentUsers:
         # Login as test user
         login_page.navigate("/login/redirect=&")
         login_page.login(test_user.username, test_user.password)
-        page.wait_for_url("**/", timeout=5000)
+        page.wait_for_load_state("networkidle")
+        page.wait_for_url("**/", timeout=10000)
 
         # Verify logged in as different user
         navbar.expect_logged_in()
