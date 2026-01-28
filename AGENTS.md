@@ -10,6 +10,19 @@ cd app && uv run app.py
 
 # The app runs at http://localhost:1283
 # Default admin credentials: admin / admin
+
+# Install test dependencies
+uv sync --extra test
+uv run playwright install chromium
+
+# Run tests (parallel by default, uses all CPU cores)
+uv run pytest ../tests/e2e/ -v
+
+# Run tests with specific worker count
+uv run pytest ../tests/e2e/ -v -n 4
+
+# Run tests sequentially
+uv run pytest ../tests/e2e/ -v -n 0
 ```
 
 ## Architecture Overview
@@ -66,6 +79,10 @@ Translations are JSON files in `app/translations/` (en, tr, es, de, zh, fr, uk, 
 - Session-based authentication (check `session["userName"]`)
 - Timestamps stored as Unix integers via `utils/time.py`
 - Posts use `url_id` for URL-friendly slugs
+
+### Testing
+
+E2E tests using Pytest + Playwright in `tests/e2e/`. See [`tests/README.md`](tests/README.md) for details.
 
 ---
 

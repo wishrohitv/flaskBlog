@@ -162,6 +162,12 @@ cython_debug/
 # App's default log files
 log/
 
+# Test database backups
+*.db.bak
+
+# Test parallel execution lock files
+tests/e2e/.locks/
+
 # PyCharm files
 /.idea
 

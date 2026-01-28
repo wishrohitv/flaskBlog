@@ -20,7 +20,7 @@ A modern blog application built with Flask, featuring a clean UI and powerful ad
 
 ### Prerequisites
 
-- Python 3.9+
+- Python 3.10+
 - [astral/uv](https://docs.astral.sh/uv/)
 
 ### Installation
@@ -40,6 +40,17 @@ Visit `http://localhost:1283` in your browser.
 
 - Username: `admin`
 - Password: `admin`
+
+### Running Tests
+
+```bash
+cd app
+uv sync --extra test
+uv run playwright install chromium
+uv run pytest ../tests/e2e/ -v  # Runs in parallel by default
+```
+
+See [tests/README.md](tests/README.md) for details.
 
 ## 🛠️ Tech Stack
 

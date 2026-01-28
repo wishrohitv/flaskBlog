@@ -1,4 +1,4 @@
-name: 🐍 Code Quality (Ruff)
+name: 🐍 Code Quality
 
 on:
   push:
