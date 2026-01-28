@@ -51,7 +51,9 @@ class LoginPage(BasePage):
         self.click_submit()
         return self
 
-    def login_and_expect_success(self, username: str, password: str, timeout: int = 5000):
+    def login_and_expect_success(
+        self, username: str, password: str, timeout: int = 5000
+    ):
         """Login and verify successful login with flash message."""
         self.login(username, password)
         self.expect_success_flash(timeout=timeout)
@@ -103,8 +105,12 @@ class LoginPage(BasePage):
 
     def is_username_valid(self) -> bool:
         """Check if username field passes HTML5 validation."""
-        return self.page.locator(self.username_input).evaluate("el => el.validity.valid")
+        return self.page.locator(self.username_input).evaluate(
+            "el => el.validity.valid"
+        )
 
     def is_password_valid(self) -> bool:
         """Check if password field passes HTML5 validation."""
-        return self.page.locator(self.password_input).evaluate("el => el.validity.valid")
+        return self.page.locator(self.password_input).evaluate(
+            "el => el.validity.valid"
+        )

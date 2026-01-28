@@ -3,7 +3,6 @@ E2E tests for the login functionality.
 """
 
 import pytest
-from playwright.sync_api import expect
 
 from tests.e2e.pages.login_page import LoginPage
 from tests.e2e.pages.navbar_component import NavbarComponent
@@ -71,7 +70,10 @@ class TestLoginSuccess:
 
         # Wait for redirect
         page.wait_for_url("**/", timeout=5000)
-        assert page.url.rstrip("/").endswith(str(flask_server["port"])) or page.url == flask_server["base_url"] + "/"
+        assert (
+            page.url.rstrip("/").endswith(str(flask_server["port"]))
+            or page.url == flask_server["base_url"] + "/"
+        )
 
     @pytest.mark.auth
     def test_login_case_insensitive_username(self, page, flask_server, app_settings):
@@ -228,7 +230,9 @@ class TestLoginFormValidation:
             assert validation_msg != ""
 
     @pytest.mark.auth
-    def test_login_form_prevents_double_submission(self, page, flask_server, app_settings):
+    def test_login_form_prevents_double_submission(
+        self, page, flask_server, app_settings
+    ):
         """Test that form submission works properly (no double submission issues)."""
         login_page = LoginPage(page, flask_server["base_url"])
         login_page.navigate()

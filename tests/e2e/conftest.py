@@ -4,7 +4,6 @@ E2E test fixtures for Flask Blog application.
 
 import os
 import shutil
-import signal
 import subprocess
 import sys
 import time

@@ -3,7 +3,6 @@ Database helper functions for E2E tests.
 """
 
 import sqlite3
-from pathlib import Path
 
 from passlib.hash import sha512_crypt as encryption
 
@@ -57,14 +56,24 @@ def create_test_user(
 
     try:
         hashed_password = encryption.hash(password)
-        profile_picture = f"https://api.dicebear.com/7.x/identicon/svg?seed={username}&radius=10"
+        profile_picture = (
+            f"https://api.dicebear.com/7.x/identicon/svg?seed={username}&radius=10"
+        )
 
         cursor.execute(
             """
             INSERT INTO users (username, email, password, profile_picture, role, points, is_verified)
             VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
-            (username, email, hashed_password, profile_picture, role, points, is_verified),
+            (
+                username,
+                email,
+                hashed_password,
+                profile_picture,
+                role,
+                points,
+                is_verified,
+            ),
         )
 
         conn.commit()
@@ -105,7 +114,9 @@ def delete_user(db_path: str, username: str) -> bool:
     cursor = conn.cursor()
 
     try:
-        cursor.execute("DELETE FROM users WHERE LOWER(username) = LOWER(?)", (username,))
+        cursor.execute(
+            "DELETE FROM users WHERE LOWER(username) = LOWER(?)", (username,)
+        )
         conn.commit()
         return cursor.rowcount > 0
     finally:
