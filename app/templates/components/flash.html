@@ -5,12 +5,12 @@
             {% for category, message in messages %}
             <div
                 role="alert"
-                class="alert {% if category == 'success' %}alert-success{% else %}alert-error{% endif %} alert-soft shadow-lg animate-[slideIn_0.3s_ease-out,fadeOut_0.5s_ease-in_3.5s_forwards]"
+                class="alert {% if category == 'success' %}alert-success{% else %}alert-error{% endif %} shadow-lg animate-[slideIn_0.3s_ease-out,fadeOut_0.5s_ease-in_3.5s_forwards]"
             >
                 {% if category == 'success' %}
-                    <i class="ti ti-circle-check text-xl"></i>
+                    <i class="ti ti-circle-check-filled text-xl"></i>
                 {% else %}
-                    <i class="ti ti-circle-x text-xl"></i>
+                    <i class="ti ti-circle-x-filled text-xl"></i>
                 {% endif %}
                 <span>{{ message }}</span>
             </div>
