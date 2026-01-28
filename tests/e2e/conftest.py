@@ -1,5 +1,7 @@
 """
 E2E test fixtures for Flask Blog application.
+
+Supports parallel test execution with pytest-xdist.
 """
 
 import os
@@ -8,6 +10,7 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+from filelock import FileLock
 
 import pytest
 from playwright.sync_api import sync_playwright
@@ -15,6 +18,32 @@ from playwright.sync_api import sync_playwright
 # Add app directory to path for imports
 APP_DIR = Path(__file__).parent.parent.parent / "app"
 sys.path.insert(0, str(APP_DIR))
+
+# Shared state file paths for parallel execution
+LOCK_DIR = Path(__file__).parent / ".locks"
+SERVER_LOCK = LOCK_DIR / "server.lock"
+SERVER_PID_FILE = LOCK_DIR / "server.pid"
+DB_BACKUP_LOCK = LOCK_DIR / "db_backup.lock"
+DB_BACKUP_DONE = LOCK_DIR / "db_backup.done"
+DB_CLEAN_LOCK = LOCK_DIR / "db_clean.lock"
+DB_CLEAN_DONE = LOCK_DIR / "db_clean.done"
+
+
+def _is_xdist_worker(config) -> bool:
+    """Check if running as a pytest-xdist worker."""
+    return hasattr(config, "workerinput")
+
+
+def _is_xdist_master(config) -> bool:
+    """Check if running as pytest-xdist master (or not using xdist)."""
+    return not _is_xdist_worker(config)
+
+
+def _get_worker_id(config) -> str:
+    """Get the worker ID (gw0, gw1, etc.) or 'master' if not using xdist."""
+    if hasattr(config, "workerinput"):
+        return config.workerinput["workerid"]
+    return "master"
 
 
 @pytest.fixture(scope="session")
@@ -30,65 +59,94 @@ def db_path(app_dir):
 
 
 @pytest.fixture(scope="session")
-def flask_server(app_settings, app_dir):
+def flask_server(request, app_settings, app_dir):
     """
     Session-scoped fixture that starts the Flask server.
-    The server runs for the entire test session and is cleaned up at the end.
+
+    With pytest-xdist, uses file locking to ensure only one worker
+    starts the server, and all workers share the same server instance.
     """
     base_url = app_settings["base_url"]
     port = app_settings["port"]
 
-    # Start the Flask application
-    env = os.environ.copy()
-    env["PYTHONUNBUFFERED"] = "1"
+    # Ensure lock directory exists
+    LOCK_DIR.mkdir(exist_ok=True)
 
-    # Redirect output to devnull to prevent buffer filling and blocking
-    process = subprocess.Popen(
-        [sys.executable, "app.py"],
-        cwd=str(app_dir),
-        env=env,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-    )
+    # Use file lock to coordinate server startup across workers
+    with FileLock(str(SERVER_LOCK)):
+        # Check if server is already running (started by another worker)
+        if SERVER_PID_FILE.exists():
+            pid = int(SERVER_PID_FILE.read_text().strip())
+            # Verify the process is still running
+            try:
+                os.kill(pid, 0)  # Signal 0 just checks if process exists
+                # Server is running, just wait for it to be ready
+                _wait_for_server(base_url)
+                yield {
+                    "process": None,
+                    "base_url": base_url,
+                    "port": port,
+                    "owner": False,
+                }
+                return
+            except OSError:
+                # Process not running, clean up stale PID file
+                SERVER_PID_FILE.unlink(missing_ok=True)
 
-    # Wait for server to be ready
-    max_wait = 30
+        # Start the Flask application
+        env = os.environ.copy()
+        env["PYTHONUNBUFFERED"] = "1"
+
+        process = subprocess.Popen(
+            [sys.executable, "app.py"],
+            cwd=str(app_dir),
+            env=env,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+
+        # Save PID for other workers
+        SERVER_PID_FILE.write_text(str(process.pid))
+
+        # Wait for server to be ready
+        _wait_for_server(base_url, port)
+
+    yield {"process": process, "base_url": base_url, "port": port, "owner": True}
+
+    # Cleanup: only the owner terminates the server
+    # Use lock to prevent race condition during cleanup
+    with FileLock(str(SERVER_LOCK)):
+        if SERVER_PID_FILE.exists():
+            process.terminate()
+            try:
+                process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait()
+            SERVER_PID_FILE.unlink(missing_ok=True)
+
+
+def _wait_for_server(base_url: str, port: int = None, max_wait: int = 30):
+    """Wait for the server to be ready."""
+    import urllib.request
+
     start_time = time.time()
-    server_ready = False
-
     while time.time() - start_time < max_wait:
         try:
-            import urllib.request
-
             urllib.request.urlopen(base_url, timeout=1)
-            server_ready = True
-            break
+            return
         except Exception:
             time.sleep(0.5)
 
-    if not server_ready:
-        process.terminate()
-        process.wait(timeout=5)
-        raise RuntimeError(
-            f"Flask server failed to start within {max_wait} seconds. "
-            f"Check that port {port} is available and the app starts correctly."
-        )
-
-    yield {"process": process, "base_url": base_url, "port": port}
-
-    # Cleanup: terminate the server
-    process.terminate()
-    try:
-        process.wait(timeout=5)
-    except subprocess.TimeoutExpired:
-        process.kill()
-        process.wait()
+    raise RuntimeError(
+        f"Flask server failed to start within {max_wait} seconds. "
+        f"Check that port {port} is available and the app starts correctly."
+    )
 
 
 @pytest.fixture(scope="session")
 def browser_instance(request):
     """Session-scoped browser instance to avoid repeated browser launches."""
-    # Check if --headed flag was passed
     headed = request.config.getoption("--headed", default=False)
     slowmo = request.config.getoption("--slowmo", default=0)
 
@@ -121,34 +179,69 @@ def page(context):
 
 
 @pytest.fixture(scope="session", autouse=True)
-def backup_and_restore_db(db_path):
+def backup_and_restore_db(request, db_path):
     """
-    Session-scoped fixture that backs up the database before tests
-    and restores it after all tests complete.
-    """
-    backup_path = db_path.with_suffix(".db.bak")
+    Session-scoped fixture that backs up the database before tests.
 
-    # Create backup before any tests run
-    if db_path.exists():
-        shutil.copy2(db_path, backup_path)
+    With pytest-xdist, coordinates to ensure only one backup happens.
+    Restore is handled by pytest_sessionfinish after ALL workers complete.
+    """
+    LOCK_DIR.mkdir(exist_ok=True)
+
+    # Use file lock to coordinate backup across workers
+    with FileLock(str(DB_BACKUP_LOCK)):
+        if not DB_BACKUP_DONE.exists():
+            # First worker to acquire lock does the backup
+            backup_path = db_path.with_suffix(".db.bak")
+            if db_path.exists():
+                shutil.copy2(db_path, backup_path)
+            DB_BACKUP_DONE.touch()
 
     yield
 
-    # Restore backup after all tests complete
-    if backup_path.exists():
-        shutil.copy2(backup_path, db_path)
-        backup_path.unlink()  # Remove the backup file
+    # In non-parallel mode, restore immediately
+    if not _is_xdist_worker(request.config):
+        backup_path = db_path.with_suffix(".db.bak")
+        if backup_path.exists():
+            shutil.copy2(backup_path, db_path)
+            backup_path.unlink(missing_ok=True)
 
 
-@pytest.fixture(scope="function")
+def pytest_sessionfinish(session, exitstatus):
+    """
+    Clean up after all tests complete.
+    In xdist mode, this runs on the master after all workers finish.
+    """
+    if _is_xdist_master(session.config):
+        # Restore database from backup
+        db_path = APP_DIR / "instance" / "flaskblog.db"
+        backup_path = db_path.with_suffix(".db.bak")
+        if backup_path.exists():
+            shutil.copy2(backup_path, db_path)
+            backup_path.unlink(missing_ok=True)
+
+        # Clean up lock directory
+        if LOCK_DIR.exists():
+            shutil.rmtree(LOCK_DIR, ignore_errors=True)
+
+
+@pytest.fixture(scope="session")
 def clean_db(db_path):
     """
-    Reset database to known state before each test.
-    Removes test users but keeps the admin.
+    Session-scoped fixture that resets database once at the start.
+    Removes test users from previous runs but keeps the admin.
+
+    Uses file locking to ensure only one worker does the cleanup.
     """
     from tests.e2e.helpers.database_helpers import reset_database
 
-    reset_database(str(db_path))
+    LOCK_DIR.mkdir(exist_ok=True)
+
+    with FileLock(str(DB_CLEAN_LOCK)):
+        if not DB_CLEAN_DONE.exists():
+            reset_database(str(db_path))
+            DB_CLEAN_DONE.touch()
+
     yield
 
 
@@ -174,10 +267,11 @@ def logged_in_page(page, flask_server, app_settings):
 
 
 @pytest.fixture(scope="function")
-def test_user(clean_db, db_path):
+def test_user(db_path):
     """
     Create a test user and return credentials.
-    The user is created fresh for each test.
+    The user is created fresh for each test with a unique UUID-based username.
+    No cleanup needed - UUIDs ensure uniqueness across parallel tests.
     """
     from tests.e2e.helpers.database_helpers import create_test_user
     from tests.e2e.helpers.test_data import UserData
@@ -195,10 +289,11 @@ def test_user(clean_db, db_path):
 
 
 @pytest.fixture(scope="function")
-def unverified_test_user(clean_db, db_path):
+def unverified_test_user(db_path):
     """
     Create an unverified test user and return credentials.
     The user is created fresh for each test with is_verified="False".
+    No cleanup needed - UUIDs ensure uniqueness across parallel tests.
     """
     from tests.e2e.helpers.database_helpers import create_test_user
     from tests.e2e.helpers.test_data import UserData

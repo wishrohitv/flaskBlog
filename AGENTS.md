@@ -11,8 +11,18 @@ cd app && uv run app.py
 # The app runs at http://localhost:1283
 # Default admin credentials: admin / admin
 
-# Run tests (from app/ directory)
+# Install test dependencies
+uv sync --extra test
+uv run playwright install chromium
+
+# Run tests (parallel by default, uses all CPU cores)
 uv run pytest ../tests/e2e/ -v
+
+# Run tests with specific worker count
+uv run pytest ../tests/e2e/ -v -n 4
+
+# Run tests sequentially
+uv run pytest ../tests/e2e/ -v -n 0
 ```
 
 ## Architecture Overview

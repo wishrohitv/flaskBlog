@@ -8,22 +8,43 @@ End-to-end tests for Flask Blog using Pytest and Playwright.
 cd app
 
 # Install test dependencies
-uv sync
-uv pip install pytest pytest-playwright playwright
-playwright install chromium
+uv sync --extra test
+uv run playwright install chromium
 
-# Run all tests
-pytest ../tests/e2e/ -v
+# Run all tests (parallel by default)
+uv run pytest ../tests/e2e/ -v
 
 # Run specific test file
-pytest ../tests/e2e/auth/test_login.py -v
+uv run pytest ../tests/e2e/auth/test_login.py -v
 
 # Run with headed browser (visible)
-pytest ../tests/e2e/ --headed
+uv run pytest ../tests/e2e/ --headed
 
 # Run specific test class
-pytest ../tests/e2e/auth/test_login.py::TestLoginSuccess -v
+uv run pytest ../tests/e2e/auth/test_login.py::TestLoginSuccess -v
 ```
+
+## Parallel Execution
+
+Tests run in parallel by default using `pytest-xdist` with automatic worker detection (`-n auto`). This uses all available CPU cores to speed up test execution.
+
+```bash
+# Run with specific number of workers
+uv run pytest ../tests/e2e/ -n 4
+
+# Run sequentially (disable parallel)
+uv run pytest ../tests/e2e/ -n 0
+
+# Run with slow motion for debugging (milliseconds)
+uv run pytest ../tests/e2e/ --slowmo 500
+```
+
+**How it works:**
+
+- A single Flask server is shared across all workers (coordinated via file locks)
+- Each test creates unique users with UUIDs to avoid conflicts
+- Database is backed up before tests and restored after all workers complete
+- Browser contexts are isolated per test for clean state
 
 ## Structure
 
@@ -145,14 +166,14 @@ def test_login(page, flask_server):
 
 ### Fixtures
 
-| Fixture            | Scope    | Purpose                    |
-| ------------------ | -------- | -------------------------- |
-| `flask_server`     | session  | Starts/stops the Flask app |
-| `browser_instance` | session  | Single Chromium instance   |
-| `page`             | function | Fresh page per test        |
-| `clean_db`         | function | Resets database state      |
-| `test_user`        | function | Creates a test user        |
-| `logged_in_page`   | function | Pre-authenticated page     |
+| Fixture            | Scope    | Purpose                          |
+| ------------------ | -------- | -------------------------------- |
+| `flask_server`     | session  | Starts/stops the Flask app       |
+| `browser_instance` | session  | Single Chromium instance         |
+| `clean_db`         | session  | Resets database once at start    |
+| `page`             | function | Fresh page per test              |
+| `test_user`        | function | Creates a unique UUID-based user |
+| `logged_in_page`   | function | Pre-authenticated page           |
 
 ### Test Data
 

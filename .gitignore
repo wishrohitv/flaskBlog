@@ -165,6 +165,9 @@ log/
 # Test database backups
 *.db.bak
 
+# Test parallel execution lock files
+tests/e2e/.locks/
+
 # PyCharm files
 /.idea
 
