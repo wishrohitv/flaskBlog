@@ -17,6 +17,22 @@ APP_DIR = Path(__file__).parent.parent.parent / "app"
 sys.path.insert(0, str(APP_DIR))
 
 
+def pytest_addoption(parser):
+    """Register custom command line options."""
+    parser.addoption(
+        "--headed",
+        action="store_true",
+        default=False,
+        help="Run browser in headed mode (visible browser window)",
+    )
+    parser.addoption(
+        "--slowmo",
+        type=int,
+        default=0,
+        help="Slow down browser operations by specified milliseconds",
+    )
+
+
 @pytest.fixture(scope="session")
 def app_dir():
     """Return the app directory path."""

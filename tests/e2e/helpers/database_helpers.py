@@ -22,16 +22,16 @@ def reset_database(db_path: str):
 
     try:
         # Delete all users except the default admin
-        cursor.execute("DELETE FROM users WHERE username != 'admin'")
+        cursor.execute("DELETE FROM users WHERE LOWER(username) != 'admin'")
 
         # Reset admin points to 0
-        cursor.execute("UPDATE users SET points = 0 WHERE username = 'admin'")
+        cursor.execute("UPDATE users SET points = 0 WHERE LOWER(username) = 'admin'")
 
         # Delete test posts (posts by users other than admin)
-        cursor.execute("DELETE FROM posts WHERE author != 'admin'")
+        cursor.execute("DELETE FROM posts WHERE LOWER(author) != 'admin'")
 
         # Delete test comments (comments by users other than admin)
-        cursor.execute("DELETE FROM comments WHERE username != 'admin'")
+        cursor.execute("DELETE FROM comments WHERE LOWER(username) != 'admin'")
 
         conn.commit()
     finally:

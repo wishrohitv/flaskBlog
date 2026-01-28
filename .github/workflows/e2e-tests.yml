@@ -47,8 +47,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd app
-          uv sync
-          uv pip install pytest pytest-playwright playwright
+          uv sync --extra test
           uv run playwright install chromium --with-deps
 
       - name: Run E2E tests
