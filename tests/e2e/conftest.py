@@ -86,10 +86,14 @@ def flask_server(app_settings, app_dir):
 
 
 @pytest.fixture(scope="session")
-def browser_instance():
+def browser_instance(request):
     """Session-scoped browser instance to avoid repeated browser launches."""
+    # Check if --headed flag was passed
+    headed = request.config.getoption("--headed", default=False)
+    slowmo = request.config.getoption("--slowmo", default=0)
+
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        browser = p.chromium.launch(headless=not headed, slow_mo=slowmo)
         yield browser
         browser.close()
 
