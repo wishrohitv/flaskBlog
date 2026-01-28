@@ -192,3 +192,25 @@ def test_user(clean_db, db_path):
     )
 
     return user_data
+
+
+@pytest.fixture(scope="function")
+def unverified_test_user(clean_db, db_path):
+    """
+    Create an unverified test user and return credentials.
+    The user is created fresh for each test with is_verified="False".
+    """
+    from tests.e2e.helpers.database_helpers import create_test_user
+    from tests.e2e.helpers.test_data import TestUserData
+
+    user_data = TestUserData.unverified()
+    create_test_user(
+        db_path=str(db_path),
+        username=user_data.username,
+        email=user_data.email,
+        password=user_data.password,
+        role=user_data.role,
+        is_verified=user_data.is_verified,
+    )
+
+    return user_data

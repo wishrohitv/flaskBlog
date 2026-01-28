@@ -138,3 +138,42 @@ def get_user_count(db_path: str) -> int:
         return cursor.fetchone()[0]
     finally:
         conn.close()
+
+
+def get_user_by_email(db_path: str, email: str) -> dict | None:
+    """
+    Get user data by email.
+    Returns a dictionary with user fields or None if not found.
+    """
+    conn = get_db_connection(db_path)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(
+            "SELECT * FROM users WHERE LOWER(email) = LOWER(?)",
+            (email,),
+        )
+        row = cursor.fetchone()
+
+        if row:
+            return dict(row)
+        return None
+    finally:
+        conn.close()
+
+
+def get_user_points(db_path: str, username: str) -> int | None:
+    """
+    Get user points by username.
+    Returns the points value or None if user not found.
+    """
+    user = get_user_by_username(db_path, username)
+    if user:
+        return user.get("points", 0)
+    return None
+
+
+def email_exists(db_path: str, email: str) -> bool:
+    """Check if an email exists in the database."""
+    return get_user_by_email(db_path, email) is not None
