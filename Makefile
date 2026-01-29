@@ -40,6 +40,7 @@ test-slow: ## Run tests with visible browser in slow-mo (sequential)
 lint: ## Format and lint code with Ruff (with auto-fix)
 	cd $(APP_DIR) && $(UV) run ruff format ..
 	cd $(APP_DIR) && $(UV) run ruff check --fix ..
+	cd $(APP_DIR) && $(UV) run ruff format ..
 
 # CI
 ci: ## Run CI checks (format check + lint)
