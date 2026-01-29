@@ -30,7 +30,7 @@ A modern blog application built with Flask, featuring a clean UI and powerful ad
 git clone https://github.com/DogukanUrker/flaskBlog.git
 cd flaskBlog
 
-# Install dependencies and run
+# Install app dependencies and run
 make install-app
 make run
 ```
@@ -41,6 +41,16 @@ Visit `http://localhost:1283` in your browser.
 
 - Username: `admin`
 - Password: `admin`
+
+### Running Tests
+
+```bash
+make install       # Install all dependencies including test deps
+make test          # Run E2E tests (parallel)
+make test-slow     # Run tests with browser visible (slow-mo)
+```
+
+See [tests/README.md](tests/README.md) for details.
 
 ### Makefile Commands
 
@@ -55,15 +65,6 @@ make lint          # Format and lint code (auto-fix)
 make ci            # Run CI checks
 make clean         # Remove cache files
 ```
-
-### Running Tests
-
-```bash
-make install       # Install all dependencies including test deps
-make test          # Run E2E tests (parallel)
-```
-
-See [tests/README.md](tests/README.md) for details.
 
 ## 🛠️ Tech Stack
 
