@@ -12,14 +12,12 @@ on:
     paths:
       - "app/**"
       - "tests/**"
-      - "Makefile"
       - ".github/workflows/e2e-tests.yaml"
   pull_request:
     branches: [main]
     paths:
       - "app/**"
       - "tests/**"
-      - "Makefile"
       - ".github/workflows/e2e-tests.yaml"
 
 concurrency:
