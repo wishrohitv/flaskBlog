@@ -4,6 +4,8 @@ This file provides guidance to AI Agents when working with code in this reposito
 
 ## Development Commands
 
+**Always use Make commands instead of manual commands.**
+
 ```bash
 make help          # Show all available commands
 make install       # Install all dependencies (app + dev + test + Playwright)
