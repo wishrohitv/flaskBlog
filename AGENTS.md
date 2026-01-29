@@ -4,26 +4,21 @@ This file provides guidance to AI Agents when working with code in this reposito
 
 ## Development Commands
 
+**Always use Make commands instead of manual commands.**
+
 ```bash
-# Run the application (from app/ directory)
-cd app && uv run app.py
-
-# The app runs at http://localhost:1283
-# Default admin credentials: admin / admin
-
-# Install test dependencies
-uv sync --extra test
-uv run playwright install chromium
-
-# Run tests (parallel by default, uses all CPU cores)
-uv run pytest ../tests/e2e/ -v
-
-# Run tests with specific worker count
-uv run pytest ../tests/e2e/ -v -n 4
-
-# Run tests sequentially
-uv run pytest ../tests/e2e/ -v -n 0
+make help          # Show all available commands
+make install       # Install all dependencies (app + dev + test + Playwright)
+make install-app   # Install app dependencies only
+make run           # Run the Flask application (http://localhost:1283)
+make test          # Run E2E tests (parallel)
+make test-slow     # Run tests with visible browser (slow-mo, sequential)
+make lint          # Format and lint code (auto-fix)
+make ci            # Run CI checks
+make clean         # Remove cache files
 ```
+
+Default admin credentials: admin / admin
 
 ## Architecture Overview
 

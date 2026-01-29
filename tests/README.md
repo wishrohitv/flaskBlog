@@ -4,6 +4,16 @@ End-to-end tests for Flask Blog using Pytest and Playwright.
 
 ## Quick Start
 
+### Using Makefile (Recommended)
+
+```bash
+make install       # Install all dependencies
+make test          # Run all tests (parallel)
+make test-slow     # Run with visible browser (slow-mo, sequential)
+```
+
+### Manual Commands
+
 ```bash
 cd app
 

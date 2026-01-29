@@ -28,10 +28,11 @@ A modern blog application built with Flask, featuring a clean UI and powerful ad
 ```bash
 # Clone the repository
 git clone https://github.com/DogukanUrker/flaskBlog.git
-cd flaskBlog/app
+cd flaskBlog
 
-# Run with uv
-uv run app.py
+# Install app dependencies and run
+make install-app
+make run
 ```
 
 Visit `http://localhost:1283` in your browser.
@@ -44,13 +45,26 @@ Visit `http://localhost:1283` in your browser.
 ### Running Tests
 
 ```bash
-cd app
-uv sync --extra test
-uv run playwright install chromium
-uv run pytest ../tests/e2e/ -v  # Runs in parallel by default
+make install       # Install all dependencies including test deps
+make test          # Run E2E tests (parallel)
+make test-slow     # Run tests with browser visible (slow-mo)
 ```
 
 See [tests/README.md](tests/README.md) for details.
+
+### Makefile Commands
+
+```bash
+make help          # Show all available commands
+make install       # Install all dependencies (app + dev + test + Playwright)
+make install-app   # Install app dependencies only
+make run           # Run the Flask application
+make test          # Run E2E tests (parallel)
+make test-slow     # Run tests with browser visible (slow-mo)
+make lint          # Format and lint code (auto-fix)
+make ci            # Run CI checks
+make clean         # Remove cache files
+```
 
 ## 🛠️ Tech Stack
 

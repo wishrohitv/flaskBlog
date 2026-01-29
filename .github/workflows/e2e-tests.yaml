@@ -6,18 +6,20 @@ on:
       test_path:
         description: "specific test to run (e.g., e2e/auth/test_login.py::TestLoginSuccess)"
         required: false
-        default: "e2e/"
+        default: ""
   push:
     branches: [main]
     paths:
       - "app/**"
       - "tests/**"
+      - "Makefile"
       - ".github/workflows/e2e-tests.yaml"
   pull_request:
     branches: [main]
     paths:
       - "app/**"
       - "tests/**"
+      - "Makefile"
       - ".github/workflows/e2e-tests.yaml"
 
 concurrency:
@@ -45,12 +47,12 @@ jobs:
           cache-dependency-glob: "app/pyproject.toml"
 
       - name: install dependencies
-        run: |
-          cd app
-          uv sync --extra test
-          uv run playwright install chromium --with-deps
+        run: make install
 
       - name: run e2e tests
         run: |
-          cd app
-          uv run pytest ../tests/${{ github.event.inputs.test_path || 'e2e/' }} -v --tb=short
+          if [ -n "${{ github.event.inputs.test_path }}" ]; then
+            cd app && uv run pytest ../tests/${{ github.event.inputs.test_path }} -v --tb=short
+          else
+            make test
+          fi
