@@ -1,0 +1,13 @@
+# Exclude everything by default
+*
+
+# Include app directory
+!app
+
+# Exclude non-runtime files from app
+app/.venv
+app/.ruff_cache
+app/__pycache__
+app/.DS_Store
+app/log
+app/scripts
