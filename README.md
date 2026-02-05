@@ -37,6 +37,29 @@ make run
 
 Visit `http://localhost:1283` in your browser.
 
+### Docker
+
+```bash
+make docker        # Build and run with Docker
+```
+
+Or step by step:
+
+```bash
+make docker-build  # Build the image
+make docker-run    # Run the container
+```
+
+### Configuration
+
+All settings can be configured via environment variables. Copy the example file and modify as needed:
+
+```bash
+cp .env.example .env
+```
+
+See [`.env.example`](.env.example) for all available options. When using Docker, the `.env` file is automatically passed to the container.
+
 ### Default Admin Account
 
 - Username: `admin`
@@ -59,6 +82,9 @@ make help          # Show all available commands
 make install       # Install all dependencies (app + dev + test + Playwright)
 make install-app   # Install app dependencies only
 make run           # Run the Flask application
+make docker        # Build and run with Docker
+make docker-build  # Build Docker image
+make docker-run    # Run Docker container
 make test          # Run E2E tests (parallel)
 make test-slow     # Run tests with browser visible (slow-mo)
 make lint          # Format and lint code (auto-fix)

@@ -11,6 +11,9 @@ make help          # Show all available commands
 make install       # Install all dependencies (app + dev + test + Playwright)
 make install-app   # Install app dependencies only
 make run           # Run the Flask application (http://localhost:1283)
+make docker        # Build and run with Docker
+make docker-build  # Build Docker image
+make docker-run    # Run Docker container
 make test          # Run E2E tests (parallel)
 make test-slow     # Run tests with visible browser (slow-mo, sequential)
 make lint          # Format and lint code (auto-fix)
@@ -66,6 +69,20 @@ Translations are JSON files in `app/translations/` (en, tr, es, de, zh, fr, uk, 
 - **User** - user_id, username, email, password (hashed), role (user/admin), points, is_verified
 - **Post** - id, title, content, banner (binary), author, views, category, url_id, abstract, has `hot_score` hybrid property
 - **Comment** - id, post_id (FK), comment, username, time_stamp
+
+### Configuration
+
+All settings in `app/settings.py` are read from environment variables via `os.environ.get()` with sensible defaults. A `.env` file in the project root is loaded automatically by `python-dotenv`. See `.env.example` for all available options.
+
+Key settings: `APP_HOST`, `APP_PORT`, `DEBUG_MODE`, `SQLALCHEMY_DATABASE_URI`, `APP_SECRET_KEY`, `SMTP_*`, `DEFAULT_ADMIN_*`.
+
+### Docker
+
+- **Dockerfile** — Single-stage build using `ghcr.io/astral-sh/uv:python3.10-alpine`. Runs as non-root `flaskblog` user (UID 1000). Only production deps installed (`uv sync --frozen --no-dev --no-cache`).
+- **.dockerignore** — Whitelist approach: excludes everything (`*`), then includes only `app/` minus non-runtime files (`.venv`, `__pycache__`, `.ruff_cache`, `scripts`, `log`).
+- **Environment variables** — Not baked into the image. Passed at runtime via `docker run --env-file .env` (handled automatically by `make docker-run` if `.env` exists).
+- **Example DB** — `app/instance/flaskblog.db` is included in the image so the app starts with sample data.
+- **Ports** — Container binds to `0.0.0.0:1283` (overrides Flask's default `localhost` via `APP_HOST` env var).
 
 ### Key Conventions
 

@@ -6,7 +6,7 @@ UV := uv
 
 .DEFAULT_GOAL := help
 
-.PHONY: help install install-app run test test-slow lint ci clean
+.PHONY: help install install-app run docker docker-build docker-run test test-slow lint ci clean
 
 # Help
 help: ## Show all available commands
@@ -28,6 +28,17 @@ install-app: ## Install app dependencies only
 # Application
 run: ## Run the Flask application (http://localhost:1283)
 	cd $(APP_DIR) && $(UV) run app.py
+
+# Docker
+docker: docker-build docker-run ## Build and run with Docker
+
+docker-build: ## Build Docker image
+	docker build -t flaskblog .
+
+docker-run: ## Run Docker container
+	docker run --rm -p 1283:1283 \
+		$(if $(wildcard .env),--env-file .env) \
+		flaskblog
 
 # Testing
 test: ## Run E2E tests (parallel)
