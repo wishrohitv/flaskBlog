@@ -2,7 +2,17 @@
 This module contains all the general application settings.
 """
 
+import os
 import secrets
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
+def _bool(value):
+    """Parse a string value to boolean."""
+    return str(value).lower() in ("true", "1", "yes")
 
 
 class Settings:
@@ -47,19 +57,21 @@ class Settings:
     """
 
     # Application Configuration
-    APP_NAME = "FlaskBlog"
-    APP_VERSION = "3.0.0dev"
-    APP_ROOT_PATH = "."
-    APP_HOST = "localhost"
-    APP_PORT = 1283
-    DEBUG_MODE = True
+    APP_NAME = os.environ.get("APP_NAME", "FlaskBlog")
+    APP_VERSION = os.environ.get("APP_VERSION", "3.0.0dev")
+    APP_ROOT_PATH = os.environ.get("APP_ROOT_PATH", ".")
+    APP_HOST = os.environ.get("APP_HOST", "localhost")
+    APP_PORT = int(os.environ.get("APP_PORT", 1283))
+    DEBUG_MODE = _bool(os.environ.get("DEBUG_MODE", "True"))
 
     # Feature Toggles
-    LOG_IN = True
-    REGISTRATION = True
+    LOG_IN = _bool(os.environ.get("LOG_IN", "True"))
+    REGISTRATION = _bool(os.environ.get("REGISTRATION", "True"))
 
     # Internationalization
-    LANGUAGES = ["en", "tr", "es", "de", "zh", "fr", "uk", "ru", "pt", "ja", "pl", "hi"]
+    LANGUAGES = os.environ.get(
+        "LANGUAGES", "en,tr,es,de,zh,fr,uk,ru,pt,ja,pl,hi"
+    ).split(",")
 
     # Theme Configuration
     THEMES = [
@@ -101,33 +113,40 @@ class Settings:
     ]
 
     # Logging Configuration
-    TAMGA_LOGGER = True
-    WERKZEUG_LOGGER = False
-    LOG_TO_FILE = True
-    LOG_TO_JSON = True
-    LOG_FOLDER_ROOT = "log/"
+    TAMGA_LOGGER = _bool(os.environ.get("TAMGA_LOGGER", "True"))
+    WERKZEUG_LOGGER = _bool(os.environ.get("WERKZEUG_LOGGER", "False"))
+    LOG_TO_FILE = _bool(os.environ.get("LOG_TO_FILE", "True"))
+    LOG_TO_JSON = _bool(os.environ.get("LOG_TO_JSON", "True"))
+    LOG_FOLDER_ROOT = os.environ.get("LOG_FOLDER_ROOT", "log/")
     LOG_FILE_ROOT = LOG_FOLDER_ROOT + "log.log"
     LOG_JSON_ROOT = LOG_FOLDER_ROOT + "log.json"
     BREAKER_TEXT = "\n"
 
     # Session Configuration
-    APP_SECRET_KEY = secrets.token_urlsafe(32)
-    SESSION_PERMANENT = True
+    APP_SECRET_KEY = os.environ.get("APP_SECRET_KEY", secrets.token_urlsafe(32))
+    SESSION_PERMANENT = _bool(os.environ.get("SESSION_PERMANENT", "True"))
 
     # Database Configuration
-    SQLALCHEMY_DATABASE_URI = "sqlite:///flaskblog.db"
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_DATABASE_URI = os.environ.get(
+        "SQLALCHEMY_DATABASE_URI", "sqlite:///flaskblog.db"
+    )
+    SQLALCHEMY_TRACK_MODIFICATIONS = _bool(
+        os.environ.get("SQLALCHEMY_TRACK_MODIFICATIONS", "False")
+    )
 
     # SMTP Mail Configuration
-    SMTP_SERVER = "smtp.gmail.com"
-    SMTP_PORT = 587
-    SMTP_MAIL = "flaskblogdogukanurker@gmail.com"
-    SMTP_PASSWORD = "icovdnrxcgfdswal"  # App Password without spaces
+    SMTP_SERVER = os.environ.get("SMTP_SERVER", "smtp.gmail.com")
+    SMTP_PORT = int(os.environ.get("SMTP_PORT", 587))
+    SMTP_MAIL = os.environ.get("SMTP_MAIL", "flaskblogdogukanurker@gmail.com")
+    SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD", "icovdnrxcgfdswal")
 
     # Default Admin Account Configuration
-    DEFAULT_ADMIN = True
-    DEFAULT_ADMIN_USERNAME = "admin"
-    DEFAULT_ADMIN_EMAIL = "admin@flaskblog.com"
-    DEFAULT_ADMIN_PASSWORD = "admin"
-    DEFAULT_ADMIN_POINT = 0
-    DEFAULT_ADMIN_PROFILE_PICTURE = f"https://api.dicebear.com/7.x/identicon/svg?seed={DEFAULT_ADMIN_USERNAME}&radius=10"
+    DEFAULT_ADMIN = _bool(os.environ.get("DEFAULT_ADMIN", "True"))
+    DEFAULT_ADMIN_USERNAME = os.environ.get("DEFAULT_ADMIN_USERNAME", "admin")
+    DEFAULT_ADMIN_EMAIL = os.environ.get("DEFAULT_ADMIN_EMAIL", "admin@flaskblog.com")
+    DEFAULT_ADMIN_PASSWORD = os.environ.get("DEFAULT_ADMIN_PASSWORD", "admin")
+    DEFAULT_ADMIN_POINT = int(os.environ.get("DEFAULT_ADMIN_POINT", 0))
+    DEFAULT_ADMIN_PROFILE_PICTURE = os.environ.get(
+        "DEFAULT_ADMIN_PROFILE_PICTURE",
+        f"https://api.dicebear.com/7.x/identicon/svg?seed={DEFAULT_ADMIN_USERNAME}&radius=10",
+    )
