@@ -19,8 +19,6 @@ class LoginPage(BasePage):
         self.submit_button = 'button[type="submit"]'
         self.csrf_token = 'input[name="csrf_token"]'
         self.forgot_password_link = 'a[href*="password_reset"]'
-        self.login_card = ".card"
-        self.card_title = ".card-title"
 
     def navigate(self, path: str = "/login/redirect=&"):
         """Navigate to the login page."""
@@ -51,20 +49,6 @@ class LoginPage(BasePage):
         self.click_submit()
         return self
 
-    def login_and_expect_success(
-        self, username: str, password: str, timeout: int = 5000
-    ):
-        """Login and verify successful login with flash message."""
-        self.login(username, password)
-        self.expect_success_flash(timeout=timeout)
-        return self
-
-    def login_and_expect_error(self, username: str, password: str, timeout: int = 5000):
-        """Login and verify failed login with error flash message."""
-        self.login(username, password)
-        self.expect_error_flash(timeout=timeout)
-        return self
-
     def expect_page_loaded(self):
         """Verify that all login page elements are present."""
         expect(self.page.locator(self.username_input)).to_be_visible()
@@ -84,11 +68,6 @@ class LoginPage(BasePage):
     def expect_has_forgot_password_link(self):
         """Verify forgot password link is present."""
         expect(self.page.locator(self.forgot_password_link)).to_be_visible()
-        return self
-
-    def click_forgot_password(self):
-        """Click the forgot password link."""
-        self.page.click(self.forgot_password_link)
         return self
 
     def get_username_validation_message(self) -> str:

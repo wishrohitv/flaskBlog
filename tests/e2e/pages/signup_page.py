@@ -21,8 +21,6 @@ class SignupPage(BasePage):
         self.submit_button = 'button[type="submit"]'
         self.csrf_token = 'input[name="csrf_token"]'
         self.privacy_policy_link = 'a[href="/privacy-policy"]'
-        self.signup_card = ".card"
-        self.card_title = ".card-title"
 
     def navigate(self, path: str = "/signup"):
         """Navigate to the signup page."""
@@ -71,14 +69,6 @@ class SignupPage(BasePage):
         self.click_submit()
         return self
 
-    def signup_and_expect_success(
-        self, username: str, email: str, password: str, timeout: int = 5000
-    ):
-        """Signup and verify successful signup with flash message."""
-        self.signup(username, email, password)
-        self.expect_success_flash(timeout=timeout)
-        return self
-
     def signup_and_expect_error(
         self,
         username: str,
@@ -115,11 +105,6 @@ class SignupPage(BasePage):
         expect(self.page.locator(self.privacy_policy_link)).to_be_visible()
         return self
 
-    def click_privacy_policy(self):
-        """Click the privacy policy link."""
-        self.page.click(self.privacy_policy_link)
-        return self
-
     def get_username_validation_message(self) -> str:
         """Get HTML5 validation message for username field."""
         return self.page.locator(self.username_input).evaluate(
@@ -135,12 +120,6 @@ class SignupPage(BasePage):
     def get_password_validation_message(self) -> str:
         """Get HTML5 validation message for password field."""
         return self.page.locator(self.password_input).evaluate(
-            "el => el.validationMessage"
-        )
-
-    def get_password_confirm_validation_message(self) -> str:
-        """Get HTML5 validation message for password confirmation field."""
-        return self.page.locator(self.password_confirm_input).evaluate(
             "el => el.validationMessage"
         )
 
@@ -160,34 +139,8 @@ class SignupPage(BasePage):
             "el => el.validity.valid"
         )
 
-    def is_password_confirm_valid(self) -> bool:
-        """Check if password confirmation field passes HTML5 validation."""
-        return self.page.locator(self.password_confirm_input).evaluate(
-            "el => el.validity.valid"
-        )
-
-    def get_username_min_length(self) -> int:
-        """Get the minlength attribute of the username field."""
-        return int(
-            self.page.locator(self.username_input).get_attribute("minlength") or 0
-        )
-
     def get_username_max_length(self) -> int:
         """Get the maxlength attribute of the username field."""
         return int(
             self.page.locator(self.username_input).get_attribute("maxlength") or 0
-        )
-
-    def get_email_min_length(self) -> int:
-        """Get the minlength attribute of the email field."""
-        return int(self.page.locator(self.email_input).get_attribute("minlength") or 0)
-
-    def get_email_max_length(self) -> int:
-        """Get the maxlength attribute of the email field."""
-        return int(self.page.locator(self.email_input).get_attribute("maxlength") or 0)
-
-    def get_password_min_length(self) -> int:
-        """Get the minlength attribute of the password field."""
-        return int(
-            self.page.locator(self.password_input).get_attribute("minlength") or 0
         )

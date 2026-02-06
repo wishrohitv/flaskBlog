@@ -105,41 +105,6 @@ def get_user_by_username(db_path: str, username: str) -> dict | None:
         conn.close()
 
 
-def delete_user(db_path: str, username: str) -> bool:
-    """
-    Delete a user by username.
-    Returns True if user was deleted, False if not found.
-    """
-    conn = get_db_connection(db_path)
-    cursor = conn.cursor()
-
-    try:
-        cursor.execute(
-            "DELETE FROM users WHERE LOWER(username) = LOWER(?)", (username,)
-        )
-        conn.commit()
-        return cursor.rowcount > 0
-    finally:
-        conn.close()
-
-
-def user_exists(db_path: str, username: str) -> bool:
-    """Check if a user exists by username."""
-    return get_user_by_username(db_path, username) is not None
-
-
-def get_user_count(db_path: str) -> int:
-    """Get the total number of users in the database."""
-    conn = get_db_connection(db_path)
-    cursor = conn.cursor()
-
-    try:
-        cursor.execute("SELECT COUNT(*) FROM users")
-        return cursor.fetchone()[0]
-    finally:
-        conn.close()
-
-
 def get_user_by_email(db_path: str, email: str) -> dict | None:
     """
     Get user data by email.
@@ -172,8 +137,3 @@ def get_user_points(db_path: str, username: str) -> int | None:
     if user:
         return user.get("points", 0)
     return None
-
-
-def email_exists(db_path: str, email: str) -> bool:
-    """Check if an email exists in the database."""
-    return get_user_by_email(db_path, email) is not None

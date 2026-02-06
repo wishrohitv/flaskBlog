@@ -14,7 +14,6 @@ admin_panel_comments_blueprint = Blueprint("admin_panel_comments", __name__)
 
 
 @admin_panel_comments_blueprint.route("/admin/comments", methods=["GET", "POST"])
-@admin_panel_comments_blueprint.route("/admin-panel/comments", methods=["GET", "POST"])
 def admin_panel_comments():
     if "username" in session:
         Log.info(f"Admin: {session['username']} reached to comments admin panel")
